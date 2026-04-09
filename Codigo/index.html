@@ -18,7 +18,7 @@
           <span>Carrito</span>
         </a>
 
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" onclick="openLogin()">
           <img src="img/user.png" alt="Usuario" />
           <span>Iniciar Sesión</span>
         </a>
@@ -89,6 +89,63 @@
       <div class="footer-bottom">© 2026 Botica Estrella+</div>
     </footer>
 
+    <!-- MODAL LOGIN -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Iniciar sesión</h2>
+
+    <div class="input-group">
+      <img src="img/correo.png" class="icon-img">
+      <input type="email" placeholder="Correo electrónico">
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" placeholder="Contraseña">
+      <img src="img/ojo.png" class="eye-icon" onclick="togglePassword()">
+    </div>
+
+    <button>Ingresar</button>
+
+    <p>¿No tienes cuenta?
+      <span class="link" onclick="openRegister()">Registrarse</span>
+    </p>
+  </div>
+</div>
+
+<!-- MODAL REGISTRO -->
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Crear cuenta</h2>
+
+    <div class="input-group">
+      <img src="img/usuario.png" class="icon-img">
+      <input type="text" placeholder="Nombre">
+    </div>
+
+    <div class="input-group">
+      <img src="img/correo.png" class="icon-img">
+      <input type="email" placeholder="Correo electrónico">
+    </div>
+
+    <div class="input-group">
+      <img src="img/ojo.png" class="icon-img">
+      <input type="text" placeholder="Contraseña">
+    </div>
+
+    <div class="input-group">
+      <img src="img/bloquear.png" class="icon-img">
+      <input type="text" placeholder="Confirmar contraseña">
+    </div>
+
+    <button>Registrarse</button>
+
+    <p>¿Ya tienes cuenta?
+      <span class="link" onclick="openLogin()">Iniciar sesión</span>
+    </p>
+  </div>
+</div>
     <script src="script.js"></script>
   </body>
 </html>
