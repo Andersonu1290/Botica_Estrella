@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos | Botica Estrella</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="products-page">
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="img/Botica.png" alt="Botica Estrella" />
+    </div>
+
+    <div class="nav-actions">
+      <a href="#" class="nav-item">
+        <img src="img/carrito.png" alt="Carrito" />
+        <span>Carrito</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="openLogin()">
+        <img src="img/user.png" alt="Usuario" />
+        <span>Iniciar Sesion</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="catalog-page">
+    <!-- BUSCADOR Y CATALOGO -->
+    <section class="catalog-toolbar">
+      <button class="catalog-trigger" type="button">
+        <span>Catalogo de Medicamentos</span>
+        <span class="catalog-arrow" aria-hidden="true">&#9660;</span>
+      </button>
+
+      <form class="catalog-search" action="#" method="get">
+        <input type="search" name="busqueda" placeholder="Buscar un Producto" aria-label="Buscar un producto" />
+        <button type="submit" aria-label="Buscar producto">&#8981;</button>
+      </form>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="catalog-grid product-container" aria-label="Lista de medicamentos">
+      <article class="card catalog-card">
+        <img src="img/paracetamol.png" alt="Paracetamol 120mg/5ml Jarabe" />
+        <p>Paracetamol 120mg/5ml Jarabe</p>
+        <span>S/. 2.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+
+      <article class="card catalog-card">
+        <img src="img/naproxeno.webp" alt="Naproxeno Sodico 550 Mg Tableta" />
+        <p>Naproxeno Sodico 550 Mg Tableta Recubierta</p>
+        <span>S/. 4.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+
+      <article class="card catalog-card">
+        <img src="img/clorfenamina.webp" alt="Clorfenamina 4mg Tableta" />
+        <p>Clorfenamina 4mg Tableta</p>
+        <span>S/. 5.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+
+      <article class="card catalog-card">
+        <img src="img/prednisona.jpg" alt="Prednisona 50 Mg Tableta" />
+        <p>Prednisona 50 Mg Tableta</p>
+        <span>S/. 10.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+
+      <article class="card catalog-card">
+        <img src="img/dexametasona.webp" alt="Dexametasona 4mg Tableta" />
+        <p>Dexametasona 4mg Tableta</p>
+        <span>S/. 10.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+
+      <article class="card catalog-card">
+        <img src="img/ibuprofeno.jpg" alt="Ibuprofeno 800 mg" />
+        <p>Ibuprofeno 800 mg</p>
+        <span>S/. 15.00</span>
+        <button type="button">Agregar al Carrito</button>
+      </article>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>
+        <h3>Botica Estrella</h3>
+        <a href="#">Cuidando tu bienestar</a>
+      </div>
+
+      <div>
+        <h3>Contacto</h3>
+        <a href="#">+51 924 412 183</a>
+      </div>
+
+      <div>
+        <h3>Enlaces</h3>
+        <a href="#">Sobre Nosotros</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">© 2026 Botica Estrella+</div>
+  </footer>
+</body>
+
+</html>
