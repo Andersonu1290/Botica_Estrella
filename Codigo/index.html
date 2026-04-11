@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Botica Estrella</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="logo">
+        <img src="img/Botica.png" alt="Botica Estrella" />
+      </div>
+
+      <div class="nav-actions">
+        <a href="#" class="nav-item">
+          <img src="img/carrito.png" alt="Carrito" />
+          <span>Carrito</span>
+        </a>
+
+        <a href="#" class="nav-item" onclick="openLogin()">
+          <img src="img/user.png" alt="Usuario" />
+          <span>Iniciar Sesión</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- CARRUSEL -->
+    <section class="carousel">
+      <img src="img/delivery.png" class="active" />
+      <img src="img/anuncio.jpg" />
+      <img src="img/banner3.jpg" />
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="categories">
+      <button>Medicamentos</button>
+      <button>Cuidado Personal</button>
+      <button>Mamá y Bebé</button>
+    </section>
+
+    <!-- PRODUCTOS DESTACADOS -->
+    <section class="products">
+      <h2>Destacados:</h2>
+
+      <div class="product-container">
+        <div class="card">
+          <img src="img/paracetamol.png" />
+          <p>Paracetamol 120mg/5ml Jarabe</p>
+          <span>S/. 2.00</span>
+          <button>Agregar al Carrito</button>
+        </div>
+
+        <div class="card">
+          <img src="img/old_pieces.png" />
+          <p>Pack 2 Desodorantes Old Spice</p>
+          <span>S/. 31.00</span>
+          <button>Agregar al Carrito</button>
+        </div>
+
+        <div class="card">
+          <img src="img/toallitas.png" />
+          <p>Toallitas Húmedas Ninet Plus</p>
+          <span>S/. 8.90</span>
+          <button>Agregar al Carrito</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div>
+          <h3>Botica Estrella</h3>
+          <a href="#">Cuidando tu bienestar</a>
+        </div>
+
+        <div>
+          <h3>Contacto</h3>
+          <a href="#">+51 924 412 183</a>
+        </div>
+
+        <div>
+          <h3>Enlaces</h3>
+          <a href="#">Sobre Nosotros</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">© 2026 Botica Estrella+</div>
+    </footer>
+
+    <!-- MODAL LOGIN -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Iniciar sesión</h2>
+
+    <div class="input-group">
+      <img src="img/correo.png" class="icon-img">
+      <input type="email" placeholder="Correo electrónico">
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" placeholder="Contraseña">
+      <img src="img/ojo.png" class="eye-icon" onclick="togglePassword()">
+    </div>
+
+    <button>Ingresar</button>
+
+    <p>¿No tienes cuenta?
+      <span class="link" onclick="openRegister()">Registrarse</span>
+    </p>
+  </div>
+</div>
+
+<!-- MODAL REGISTRO -->
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Crear cuenta</h2>
+
+    <div class="input-group">
+      <img src="img/usuario.png" class="icon-img">
+      <input type="text" placeholder="Nombre">
+    </div>
+
+    <div class="input-group">
+      <img src="img/correo.png" class="icon-img">
+      <input type="email" placeholder="Correo electrónico">
+    </div>
+
+    <div class="input-group">
+      <img src="img/ojo.png" class="icon-img">
+      <input type="text" placeholder="Contraseña">
+    </div>
+
+    <div class="input-group">
+      <img src="img/bloquear.png" class="icon-img">
+      <input type="text" placeholder="Confirmar contraseña">
+    </div>
+
+    <button>Registrarse</button>
+
+    <p>¿Ya tienes cuenta?
+      <span class="link" onclick="openLogin()">Iniciar sesión</span>
+    </p>
+  </div>
+</div>
+    <script src="script.js"></script>
+  </body>
+</html>
