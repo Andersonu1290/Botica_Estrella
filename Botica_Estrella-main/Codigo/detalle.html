@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="detalle_producto.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <img src="img/Botica.png" alt="Botica Estrella" />
+        </div>
+
+        <div class="nav-actions">
+            <a href="#" class="nav-item">
+                <img src="img/carrito.png" alt="Carrito" />
+                <span>Carrito</span>
+            </a>
+
+            <a href="#" class="nav-item" onclick="openLogin()">
+                <img src="img/user.png" alt="Usuario" />
+                <span>Iniciar Sesión</span>
+            </a>
+        </div>
+    </header>
+    <div class="detalle-container">
+        <div class="detalle-img">
+            <img id="imagen">
+        </div>
+        <div class="detalle-info">
+            <h2 id="nombre"></h2>
+            <p class="descripcion" id="descripcion"></p>
+            <h3 class="precio" id="precio"></h3>
+            <div class="entrega">
+                <h4>Métodos de entrega disponibles</h4>
+
+                <div class="opcion deshabilitado">
+                    <span class="icono">🚚</span>
+                    <span>Despacho a domicilio</span>
+                </div>
+
+                <div class="opcion activo">
+                    <span class="icono">🏪</span>
+                    <span>Recojo en botica</span>
+                </div>
+            </div>
+            <button class="btn-carrito">Agregar al carrito</button>
+        </div>
+
+    </div>
+    <script>
+        const productos = {
+            paracetamol: {
+                nombre: "Paracetamol 120mg/5ml Jarabe",
+                precio: "S/. 2.00",
+                descripcion: "Alivia fiebre y dolor leve.",
+                imagen: "img/paracetamol.png"
+            },
+            naproxeno: {
+                nombre: "Naproxeno Sodico 550 Mg",
+                precio: "S/. 4.00",
+                descripcion: "Antiinflamatorio para dolores musculares.",
+                imagen: "img/naproxeno.webp"
+            },
+            clorfenamina: {
+                nombre: "Clorfenamina 4mg",
+                precio: "S/. 5.00",
+                descripcion: "Antialérgico para resfriados.",
+                imagen: "img/134310L.jpg"
+            },
+            prednisona: {
+                nombre: "Prednisona 50mg",
+                precio: "S/. 10.00",
+                descripcion: "Reducir inflamaciones",
+                imagen: "img/prednisona.jpg"
+            },
+            dexametasona: {
+                nombre: "Dexametasona 4mg",
+                precio: "S/. 10.00",
+                descripcion: "Suprimir el sistema inmunológico y tratar reacciones alérgicas graves.",
+                imagen: "img/dexametasona.webp"
+            },
+            ibuprofeno: {
+                nombre: "Ibuprofeno 800mg",
+                precio: "S/. 15.00",
+                descripcion: "Antiinflamatorio no esteroideo (AINE) utilizado para tratar el dolor intenso, la inflamación aguda y la fiebre.",
+                imagen: "img/ibuprofeno.jpg"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const producto = params.get("producto");
+
+        const data = productos[producto];
+
+        document.getElementById("nombre").textContent = data.nombre;
+        document.getElementById("precio").textContent = data.precio;
+        document.getElementById("descripcion").textContent = data.descripcion;
+        document.getElementById("imagen").src = data.imagen;
+    </script>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h3>Botica Estrella</h3>
+                <a href="#">Cuidando tu bienestar</a>
+            </div>
+
+            <div>
+                <h3>Contacto</h3>
+                <a href="#">+51 924 412 183</a>
+            </div>
+
+            <div>
+                <h3>Enlaces</h3>
+                <a href="#">Sobre Nosotros</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">© 2026 Botica Estrella+</div>
+    </footer>
+</body>
+
+</html>
