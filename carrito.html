@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Carrito | Botica Estrella</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body class="cart-page">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="logo">
+        <img src="img/Botica.png" alt="Botica Estrella"/>
+      </div>
+
+      <div class="nav-actions">
+        <a href="productos.html" class="nav-item">
+          <img src="img/carrito.png" alt="Productos"/>
+          <span>Productos</span>
+        </a>
+
+        <a href="perfil.html" class="nav-item">
+          <img src="img/user.png" alt="Perfil"/>
+          <span>Perfil</span>
+        </a>
+
+        <a href="index.html" class="nav-item">
+          <img src="img/home.png" alt="Home"/>
+          <span>Home</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="cart-container">
+      <h2>Mi Carrito</h2>
+
+      <div class="cart-content">
+        <!-- LISTA DE PRODUCTOS -->
+        <div class="cart-items">
+          <div class="cart-item">
+            <img src="img/paracetamol.png" alt="Paracetamol" />
+            <div class="item-info">
+              <p>Paracetamol 120mg/5ml Jarabe</p>
+              <span>S/. 2.00</span>
+            </div>
+
+            <div class="item-quantity">
+              <button>-</button>
+              <span>1</span>
+              <button>+</button>
+            </div>
+
+            <div class="item-remove">✖</div>
+          </div>
+
+          <div class="cart-item">
+            <img src="img/ibuprofeno.jpg" alt="Ibuprofeno"/>
+            <div class="item-info">
+              <p>Ibuprofeno 800 mg Tableta Recubierta</p>
+              <span>S/. 15.00</span>
+            </div>
+
+            <div class="item-quantity">
+              <button>-</button>
+              <span>2</span>
+              <button>+</button>
+            </div>
+
+            <div class="item-remove">✖</div>
+          </div>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="cart-summary">
+          <h3>Resumen</h3>
+
+          <p>Subtotal: <span>S/. 32.00</span></p>
+          <p>Envío: <span>Gratis</span></p>
+
+          <hr />
+
+          <h2>Total: S/. 32.00</h2>
+
+          <button class="checkout-btn">Finalizar Compra</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div>
+          <h3>Botica Estrella</h3>
+          <a href="#">Cuidando tu bienestar</a>
+        </div>
+
+        <div>
+          <h3>Contacto</h3>
+          <a href="#">+51 924 412 183</a>
+        </div>
+
+        <div>
+          <h3>Enlaces</h3>
+          <a href="nosotros.html">Sobre Nosotros</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">© 2026 Botica Estrella+</div>
+    </footer>
+  </body>
+</html>

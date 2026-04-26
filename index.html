@@ -13,9 +13,17 @@
       </div>
 
       <div class="nav-actions">
-        <a href="#" class="nav-item">
+        <a href="carrito.html" class="nav-item">
           <img src="img/carrito.png" alt="Carrito" />
           <span>Carrito</span>
+        </a>
+
+        <a href="productos.html" class="nav-item">
+          <span>Productos</span>
+        </a>
+
+        <a href="Perfil.html" class="nav-item">
+          <span>Perfil</span>
         </a>
 
         <a href="#" class="nav-item" onclick="openLogin()">
@@ -27,16 +35,16 @@
 
     <!-- CARRUSEL -->
     <section class="carousel">
-      <img src="img/delivery.png" class="active" />
-      <img src="img/anuncio.jpg" />
-      <img src="img/banner3.jpg" />
+      <img src="img/delivery.png" class="active" alt="Banner1" />
+      <img src="img/anuncio.jpg" alt="Banner2" />
+      <img src="img/banner3.jpg" alt="Banner3" />
     </section>
 
     <!-- CATEGORÍAS -->
     <section class="categories">
-      <button>Medicamentos</button>
-      <button>Cuidado Personal</button>
-      <button>Mamá y Bebé</button>
+      <a href="productos.html" class="cat-btn">Medicamentos</a>
+      <a href="#" class="cat-btn">Cuidado Personal</a>
+      <a href="#" class="cat-btn">Mamá y Bebé</a>
     </section>
 
     <!-- PRODUCTOS DESTACADOS -->
@@ -45,21 +53,21 @@
 
       <div class="product-container">
         <div class="card">
-          <img src="img/paracetamol.png" />
+          <img src="img/paracetamol.png" alt="Paracetamol" />
           <p>Paracetamol 120mg/5ml Jarabe</p>
           <span>S/. 2.00</span>
           <button>Agregar al Carrito</button>
         </div>
 
         <div class="card">
-          <img src="img/old_pieces.png" />
+          <img src="img/old_pieces.png" alt="Old Pieces" />
           <p>Pack 2 Desodorantes Old Spice</p>
           <span>S/. 31.00</span>
           <button>Agregar al Carrito</button>
         </div>
 
         <div class="card">
-          <img src="img/toallitas.png" />
+          <img src="img/toallitas.png" alt="Toallitas Húmedas" />
           <p>Toallitas Húmedas Ninet Plus</p>
           <span>S/. 8.90</span>
           <button>Agregar al Carrito</button>
@@ -82,7 +90,7 @@
 
         <div>
           <h3>Enlaces</h3>
-          <a href="#">Sobre Nosotros</a>
+          <a href="nosotros.html">Sobre Nosotros</a>
         </div>
       </div>
 
@@ -90,91 +98,102 @@
     </footer>
 
     <!-- MODAL LOGIN -->
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Iniciar sesión</h2>
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Iniciar sesión</h2>
 
-    <div class="input-group">
-      <img src="img/correo.png" class="icon-img">
-      <input type="email" placeholder="Correo electrónico">
+        <div class="input-group">
+          <img src="img/correo.png" class="icon-img" alt="Correo" />
+          <input type="email" id="loginEmail" placeholder="Correo electrónico" />
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Contraseña" />
+          <img src="img/ojo.png" class="eye-icon" onclick="togglePassword()" />
+        </div>
+
+        <button onclick="validarLogin()">Ingresar</button>
+
+        <p class="error-msg" id="loginError"></p>
+
+        <p>
+          ¿No tienes cuenta?
+          <span class="link" onclick="openRegister()">Registrarse</span>
+        </p>
+      </div>
     </div>
 
-    <div class="input-group">
-      <input type="password" id="password" placeholder="Contraseña">
-      <img src="img/ojo.png" class="eye-icon" onclick="togglePassword()">
+    <!-- MODAL REGISTRO -->
+    <div id="registerModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Crear cuenta</h2>
+
+        <div class="input-group">
+          <img src="img/usuario.png" class="icon-img" alt="Usuario" />
+          <input type="text" id="regNombre" placeholder="Nombre" />
+        </div>
+
+        <div class="input-group">
+          <img src="img/correo.png" class="icon-img" alt="Correo" />
+          <input type="email" id="regEmail" placeholder="Correo electrónico" />
+        </div>
+
+        <div class="input-group">
+          <img src="img/ojo.png" class="icon-img" alt="Ojo" />
+          <input type="password" id="regPassword" placeholder="Contraseña" />
+        </div>
+
+        <div class="input-group">
+          <img src="img/bloquear.png" class="icon-img" alt="Bloquear" />
+          <input type="password" id="regConfirm" placeholder="Confirmar contraseña" />
+        </div>
+
+        <button onclick="validarRegistro()">Registrarse</button>
+
+        <p class="error-msg" id="regError"></p>
+
+        <p>
+          ¿Ya tienes cuenta?
+          <span class="link" onclick="openLogin()">Iniciar sesión</span>
+        </p>
+      </div>
     </div>
-
-    <button>Ingresar</button>
-
-    <p>¿No tienes cuenta?
-      <span class="link" onclick="openRegister()">Registrarse</span>
-    </p>
-  </div>
-</div>
-
-<!-- MODAL REGISTRO -->
-<div id="registerModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>Crear cuenta</h2>
-
-    <div class="input-group">
-      <img src="img/usuario.png" class="icon-img">
-      <input type="text" placeholder="Nombre">
-    </div>
-
-    <div class="input-group">
-      <img src="img/correo.png" class="icon-img">
-      <input type="email" placeholder="Correo electrónico">
-    </div>
-
-    <div class="input-group">
-      <img src="img/ojo.png" class="icon-img">
-      <input type="text" placeholder="Contraseña">
-    </div>
-
-    <div class="input-group">
-      <img src="img/bloquear.png" class="icon-img">
-      <input type="text" placeholder="Confirmar contraseña">
-    </div>
-
-    <button>Registrarse</button>
-
-    <p>¿Ya tienes cuenta?
-      <span class="link" onclick="openLogin()">Iniciar sesión</span>
-    </p>
-  </div>
-</div>
     <script src="script.js"></script>
+
     <!-- n8n CHAT -->
-<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
+      rel="stylesheet"
+    />
 
-<script type="module">
-  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+    <script type="module">
+      import { createChat } from "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
 
-  createChat({
-    webhookUrl: 'https://n8n-production-7867.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat',
+      createChat({
+        webhookUrl:
+          "https://n8n-production-7867.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat",
 
-    mode: 'window',
+        mode: "window",
 
-    showWelcomeScreen: true,
+        showWelcomeScreen: true,
 
-    initialMessages: [
-      'Hola 👋',
-      'Soy el asistente de Botica Estrella, ¿en qué puedo ayudarte?'
-    ],
+        initialMessages: [
+          "Hola",
+          "Soy el asistente de Botica Estrella, ¿en qué puedo ayudarte?",
+        ],
 
-    i18n: {
-      en: {
-        title: 'Hola 👋',
-        subtitle: 'Escríbenos, estamos para ayudarte',
-        getStarted: 'Iniciar chat',
-        inputPlaceholder: 'Escribe tu mensaje...',
-        footer: ''
-      }
-    }
-  });
-</script>
+        i18n: {
+          en: {
+            title: "Hola",
+            subtitle: "Escríbenos, estamos para ayudarte",
+            getStarted: "Iniciar chat",
+            inputPlaceholder: "Escribe tu mensaje...",
+            footer: "",
+          },
+        },
+      });
+    </script>
   </body>
 </html>

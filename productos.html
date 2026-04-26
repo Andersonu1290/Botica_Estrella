@@ -1,282 +1,123 @@
 <!doctype html>
 <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productos | Botica Estrella</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Productos | Botica Estrella</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-
-<body class="products-page">
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="logo">
-      <img src="img/Botica.png" alt="Botica Estrella" />
-    </div>
-
-    <div class="nav-actions">
-      <a href="#" class="nav-item">
-        <img src="img/carrito.png" alt="Carrito" />
-        <span>Carrito</span>
-      </a>
-
-      <a href="#" class="nav-item" onclick="openLogin()">
-        <img src="img/user.png" alt="Usuario" />
-        <span>Iniciar Sesion</span>
-      </a>
-    </div>
-  </header>
-
-  <main class="catalog-page">
-    <!-- BUSCADOR Y CATALOGO -->
-    <section class="catalog-toolbar">
-      <button class="catalog-trigger" type="button">
-        <span>Catalogo de Medicamentos</span>
-        <span class="catalog-arrow" aria-hidden="true">&#9660;</span>
-      </button>
-
-      <form class="catalog-search" action="#" method="get">
-        <input type="search" name="busqueda" placeholder="Buscar un Producto" aria-label="Buscar un producto" />
-        <button type="submit" aria-label="Buscar producto">&#8981;</button>
-      </form>
-    </section>
-
-    <!-- PRODUCTOS -->
-    <section class="catalog-grid product-container" aria-label="Lista de medicamentos">
-      <article class="card catalog-card" onclick="verDetalle('paracetamol')">
-        <img src="img/paracetamol.png" alt="Paracetamol 120mg/5ml Jarabe" />
-        <p>Paracetamol 120mg/5ml Jarabe</p>
-        <span>S/. 2.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('paracetamol')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('naproxeno')">
-        <img src="img/naproxeno.webp" alt="Naproxeno Sodico 550 Mg Tableta" />
-        <p>Naproxeno Sodico 550 Mg Tableta Recubierta</p>
-        <span>S/. 4.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('naproxeno')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('clorfenamina')">
-        <img src="img/134310L.jpg" alt="Clorfenamina 4mg Tableta" />
-        <p>Clorfenamina 4mg Tableta</p>
-        <span>S/. 5.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('clorfenamina')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('prednisona')">
-        <img src="img/prednisona.jpg" alt="Prednisona 50 Mg Tableta" />
-        <p>Prednisona 50 Mg Tableta</p>
-        <span>S/. 10.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('prednisona')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('dexametasona')">
-        <img src="img/dexametasona.webp" alt="Dexametasona 4mg Tableta" />
-        <p>Dexametasona 4mg Tableta</p>
-        <span>S/. 10.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('dexametasona')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('ibuprofeno')">
-        <img src="img/ibuprofeno.jpg" alt="Ibuprofeno 800 mg" />
-        <p>Ibuprofeno 800 mg</p>
-        <span>S/. 15.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('ibuprofeno')">Agregar al Carrito</button>
-      </article>
-      <article class="card catalog-card" onclick="verDetalle('alcoholGel')">
-        <img src="img/Alcohol en Gel.webp" alt="Alcohol en gel 70%" />
-        <p>Alcohol en gel 70% 250ml</p>
-        <span>S/. 8.50</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('alcoholGel')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('termometroDigital')">
-        <img src="img/termometro digital.webp" alt="Termómetro digital" />
-        <p>Termómetro digital</p>
-        <span>S/. 25.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('termometroDigital')">Agregar al
-          Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('vitaminaC')">
-        <img src="img/vitamina c.avif" alt="Vitaminas C 500 mg" />
-        <p>Vitaminas C 500 mg</p>
-        <span>S/. 12.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('vitaminaC')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('vendas')">
-        <img src="img/vendas elasticas.jpg" alt="Vendas elásticas" />
-        <p>Vendas elásticas 5m</p>
-        <span>S/. 6.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('vendas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('cremaHeridas')">
-        <img src="img/creama quemaduras.avif" alt="Crema para heridas" />
-        <p>Crema para heridas y quemaduras</p>
-        <span>S/. 9.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('cremaHeridas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('aspirina')">
-        <img src="img/aspirina.avif" alt="Aspirina 500 mg" />
-        <p>Aspirina 500 mg</p>
-        <span>S/. 7.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('aspirina')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('omeprazol')">
-        <img src="img/omeprazol.png" alt="Omeprazol 20 mg" />
-        <p>Omeprazol 20 mg</p>
-        <span>S/. 18.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('omeprazol')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('loratadina')">
-        <img src="img/loratadina.jpg" alt="Loratadina 10 mg" />
-        <p>Loratadina 10 mg</p>
-        <span>S/. 14.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('loratadina')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('suero')">
-        <img src="img/suero oral.jpg" alt="Suero oral 500 ml" />
-        <p>Suero oral 500 ml</p>
-        <span>S/. 11.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('suero')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('gelAntiinflamatorio')">
-        <img src="img/gel antiflamatorio.jpg" alt="Gel antiinflamatorio" />
-        <p>Gel antiinflamatorio 100 g</p>
-        <span>S/. 13.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('gelAntiinflamatorio')">Agregar al
-          Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('termometroInfrarrojo')">
-        <img src="img/termometro infrarojo.webp" alt="Termómetro infrarrojo" />
-        <p>Termómetro infrarrojo</p>
-        <span>S/. 55.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('termometroInfrarrojo')">Agregar al
-          Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('algodon')">
-        <img src="img/algodon.jpg" alt="Algodón" />
-        <p>Algodón 100 g</p>
-        <span>S/. 4.50</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('algodon')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('curitas')">
-        <img src="img/curitas.png" alt="Curitas adhesivas" />
-        <p>Curitas adhesivas surtidas</p>
-        <span>S/. 5.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('curitas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('mascarillas')">
-        <img src="img/mascarilla.jpg" alt="Mascarillas quirúrgicas" />
-        <p>Mascarillas quirúrgicas 10 uds</p>
-        <span>S/. 20.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('mascarillas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('guantes')">
-        <img src="img/guantes.jpg" alt="Guantes desechables" />
-        <p>Guantes desechables 50 uds</p>
-        <span>S/. 18.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('guantes')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('antiseptico')">
-        <img src="img/antiseptico.jpg" alt="Antiséptico para piel" />
-        <p>Antiséptico para piel 120 ml</p>
-        <span>S/. 10.50</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('antiseptico')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('jeringas')">
-        <img src="img/jeringas.jpg" alt="Jeringas desechables" />
-        <p>Jeringas desechables 5 ml</p>
-        <span>S/. 9.50</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('jeringas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('colirio')">
-        <img src="img/colirio.jpg" alt="Colirio lubricante" />
-        <p>Colirio lubricante 10 ml</p>
-        <span>S/. 16.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('colirio')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('protectorSolar')">
-        <img src="img/protector solar.webp" alt="Protector solar" />
-        <p>Protector solar SPF 50</p>
-        <span>S/. 22.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('protectorSolar')">Agregar al
-          Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('probioticos')">
-        <img src="img/probioticos.jpg" alt="Probióticos" />
-        <p>Probióticos 30 cápsulas</p>
-        <span>S/. 28.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('probioticos')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('bandas')">
-        <img src="img/bandas de resistencia.png" alt="Banditas elásticas" />
-        <p>Banditas de resistencia</p>
-        <span>S/. 19.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('bandas')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('cremaDental')">
-        <img src="img/crema dental.webp" alt="Crema dental" />
-        <p>Crema dental protectora</p>
-        <span>S/. 8.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('cremaDental')">Agregar al Carrito</button>
-      </article>
-
-      <article class="card catalog-card" onclick="verDetalle('shampoo')">
-        <img src="img/shampoo.avif" alt="Shampoo antibacterial" />
-        <p>Shampoo antibacterial 250 ml</p>
-        <span>S/. 17.00</span>
-        <button type="button" onclick="event.stopPropagation(); verDetalle('shampoo')">Agregar al Carrito</button>
-      </article>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div>
-        <h3>Botica Estrella</h3>
-        <a href="#">Cuidando tu bienestar</a>
+  <body class="products-page">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="logo">
+        <img src="img/Botica.png" alt="Botica Estrella" />
       </div>
 
-      <div>
-        <h3>Contacto</h3>
-        <a href="#">+51 924 412 183</a>
+      <div class="nav-actions">
+        <a href="carrito.html" class="nav-item">
+          <img src="img/carrito.png" alt="Carrito" />
+          <span>Carrito</span>
+        </a>
+
+        <a href="perfil.html" class="nav-item">
+          <img src="img/user.png" alt="Perfil" />
+          <span>Perfil</span>
+        </a>
+
+        <a href="index.html" class="nav-item">
+          <img src="img/home.png" alt="Hom" />
+          <span>Home</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="catalog-page">
+      <!-- BUSCADOR Y CATALOGO -->
+      <section class="catalog-toolbar">
+        <!-- LISTA DESPLEGABLE -->
+        <select class="catalog-select">
+          <option>Medicamentos</option>
+          <option>Cuidado Personal</option>
+          <option>Mamá y Bebé</option>
+        </select>
+
+        <!-- BUSCADOR -->
+        <form class="catalog-search" action="#" method="get">
+          <input type="search" placeholder="Buscar un producto" />
+          <button type="submit">🔍</button>
+        </form>
+      </section>
+
+      <!-- PRODUCTOS -->
+      <section
+        class="catalog-grid product-container"
+        aria-label="Lista de medicamentos"
+      >
+        <article class="card catalog-card">
+          <img src="img/paracetamol.png" alt="Paracetamol 120mg/5ml Jarabe" />
+          <p>Paracetamol 120mg/5ml Jarabe</p>
+          <span>S/. 2.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+
+        <article class="card catalog-card">
+          <img src="img/naproxeno.webp" alt="Naproxeno Sodico 550 Mg Tableta" />
+          <p>Naproxeno Sodico 550 Mg Tableta Recubierta</p>
+          <span>S/. 4.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+
+        <article class="card catalog-card">
+          <img src="img/clorfenamina.jpg" alt="Clorfenamina 4mg Tableta" />
+          <p>Clorfenamina 4mg Tableta</p>
+          <span>S/. 5.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+
+        <article class="card catalog-card">
+          <img src="img/prednisona.jpg" alt="Prednisona 50 Mg Tableta" />
+          <p>Prednisona 50 Mg Tableta</p>
+          <span>S/. 10.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+
+        <article class="card catalog-card">
+          <img src="img/dexametasona.webp" alt="Dexametasona 4mg Tableta" />
+          <p>Dexametasona 4mg Tableta</p>
+          <span>S/. 10.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+
+        <article class="card catalog-card">
+          <img src="img/ibuprofeno.jpg" alt="Ibuprofeno 800 mg" />
+          <p>Ibuprofeno 800 mg</p>
+          <span>S/. 15.00</span>
+          <button type="button">Agregar al Carrito</button>
+        </article>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div>
+          <h3>Botica Estrella</h3>
+          <a href="#">Cuidando tu bienestar</a>
+        </div>
+
+        <div>
+          <h3>Contacto</h3>
+          <a href="#">+51 924 412 183</a>
+        </div>
+
+        <div>
+          <h3>Enlaces</h3>
+          <a href="nosotros.html">Sobre Nosotros</a>
+        </div>
       </div>
 
-      <div>
-        <h3>Enlaces</h3>
-        <a href="#">Sobre Nosotros</a>
-      </div>
-    </div>
-
-    <div class="footer-bottom">© 2026 Botica Estrella+</div>
-  </footer>
-  <script>
-    function verDetalle(producto) {
-      window.location.href = "detalle.html?producto=" + producto;
-    }
-  </script>
-</body>
-
+      <div class="footer-bottom">© 2026 Botica Estrella+</div>
+    </footer>
+  </body>
 </html>
