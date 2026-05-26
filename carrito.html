@@ -7,29 +7,39 @@
     <link rel="icon" href="logo/botica_estrella-logo.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
     
+    
   </head>
 
   <body class="cart-page">
-    <header class="navbar">
-      <div class="logo">
-        <img src="img/Botica.png" alt="Botica Estrella"/>
-      </div>
+    <header class="modern-navbar">
 
-      <div class="nav-actions">
-        <a href="productos.html" class="nav-item">
-          <img src="img/carrito.png" alt="Productos"/>
-          <span>Productos</span>
+    <div class="nav-left">
+        <a href="index.html" class="modern-logo">
+            <div class="logo-star">★</div>
+            <span>Botica Estrella</span>
         </a>
-        <a href="perfil.html" class="nav-item">
-          <img src="img/user.png" alt="Perfil"/>
-          <span>Perfil</span>
+    </div>
+
+    <nav class="modern-nav-links">
+
+        <a href="productos.html" class="modern-link">
+            <img src="img/agregar-producto.png" alt="">
+            <span>Productos</span>
         </a>
-        <a href="index.html" class="nav-item">
-          <img src="img/home.png" alt="Home"/>
-          <span>Home</span>
+
+        <a href="perfil.html" class="modern-link">
+            <img src="img/usuario.png" alt="">
+            <span>Perfil</span>
         </a>
-      </div>
-    </header>
+
+        <a href="index.html" class="modern-link">
+            <img src="img/casa.png" alt="">
+            <span>Home</span>
+        </a>
+
+    </nav>
+
+</header>
 
     <main class="cart-container">
       <h2>Mi Carrito</h2>
@@ -47,7 +57,7 @@
               <span>1</span>
               <button>+</button>
             </div>
-            <div class="item-remove">✖</div>
+            <div class="item-remove">🗑</div>
           </div>
 
           <div class="cart-item">
@@ -61,7 +71,7 @@
               <span>2</span>
               <button>+</button>
             </div>
-            <div class="item-remove">✖</div>
+            <div class="item-remove">🗑</div>
           </div>
         </div>
 
@@ -118,14 +128,80 @@
     <div id="loginModal" class="modal">...</div>
     <div id="registerModal" class="modal">...</div>
 
-    <footer class="footer">
-      <div class="footer-content">
-        <div><h3>Botica Estrella</h3><a href="#">Cuidando tu bienestar</a></div>
-        <div><h3>Contacto</h3><a href="#">+51 924 412 183</a></div>
-        <div><h3>Enlaces</h3><a href="nosotros.html">Sobre Nosotros</a></div>
+    <!-- ================= FOOTER PREMIUM ================= -->
+<footer class="footer-premium">
+
+  <div class="footer-container">
+
+    <!-- MARCA -->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-star">★</div>
+        <h2>Botica Estrella</h2>
       </div>
-      <div class="footer-bottom">© 2026 Botica Estrella+</div>
-    </footer>
+
+      <p>
+        Plataforma e-commerce farmacéutica de última generación.
+        Cuidando tu salud con tecnología, rapidez y confianza.
+      </p>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="footer-column">
+      <h3>Navegación</h3>
+
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Catálogo de Productos</a>
+      <a href="nosotros.html">Sobre Nosotros</a>
+    </div>
+
+    <!-- LEGAL -->
+    <div class="footer-column">
+      <h3>Legal y Ayuda</h3>
+
+      <a href="#">Términos y Condiciones</a>
+      <a href="#">Políticas de Privacidad</a>
+      <a href="#">Libro de Reclamaciones</a>
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="footer-column">
+      <h3>Contáctanos</h3>
+
+      <div class="footer-contact">
+        <span>📞</span>
+        <div>
+          <p>Llámanos</p>
+          <strong>+51 924 412 183</strong>
+        </div>
+      </div>
+
+      <div class="footer-contact">
+        <span>✉️</span>
+        <div>
+          <p>Correo de soporte</p>
+          <strong>soporte@estrella.com</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="footer-bottom-premium">
+
+    <p>
+      © 2026 Botica Estrella. Todos los derechos reservados.
+    </p>
+
+    <div class="footer-dev">
+      <span>Desarrollado por</span>
+      <strong>Wansd System</strong>
+    </div>
+
+  </div>
+
+</footer>
 
     <script type="module" src="script.js"></script>
   </body>
