@@ -2,36 +2,67 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Botica Estrella</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="icon" href="logo/botica_estrella-logo.ico" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              medical: { blue: '#0d4d8b', dark: '#0a3663', light: '#f0f7ff', accent: '#2ecc71', border: '#e2e8f0' }
+            }
+          }
+        }
+      }
+    </script>
     
   </head>
   <body>
-    <header class="navbar">
-      <div class="logo">
-        <img src="img/Botica.png" alt="Botica Estrella" />
-      </div>
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm transition-all">
+      <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20 gap-4">
+          <div class="flex items-center gap-3 cursor-pointer flex-shrink-0" onclick="window.location.href='index.html'">
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-medical-blue to-blue-400 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md">
+              ★</div>
+            <span class="text-xl md:text-2xl font-black text-medical-dark tracking-tight hidden sm:block">Botica
+              Estrella</span>
+          </div>
 
-      <div class="nav-actions">
-        <a href="carrito.html" class="nav-item">
-          <img src="img/carrito.png" alt="Carrito" />
-          <span>Carrito</span>
-        </a>
-
-        <a href="productos.html" class="nav-item">
-          <span>Productos</span>
-        </a>
-
-        <a href="perfil.html" class="nav-item">
-          <span>Perfil</span>
-        </a>
-
-        <a href="#" class="nav-item" onclick="openLogin()">
-          <img src="img/user.png" alt="Usuario" />
-          <span>Iniciar Sesión</span>
-        </a>
+          <nav class="flex items-center justify-end gap-2 sm:gap-4 flex-1">
+            <a href="index.html"
+              class="text-medical-blue font-bold px-3 py-2 transition-colors">Inicio</a>
+            <a href="productos.html"
+              class="text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Productos</a>
+            <a href="nosotros.html"
+              class="text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Nosotros</a>
+            <a href="perfil.html"
+              class="text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Perfil</a>
+            <a href="carrito.html" class="relative p-2 text-slate-500 hover:text-medical-blue transition-colors group"
+              aria-label="Carrito">
+              <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                </path>
+              </svg>
+              <span
+                class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 border-2 border-white rounded-full">2</span>
+            </a>
+            <a href="#" onclick="openLogin()"
+              class="hidden md:inline-flex items-center justify-center px-6 py-2.5 rounded-full text-white bg-slate-900 hover:bg-medical-blue shadow-lg hover:shadow-medical-blue/30 font-bold transition-all active:scale-95 gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              Mi Cuenta
+            </a>
+          </nav>
+        </div>
       </div>
     </header>
 
@@ -101,65 +132,58 @@
       <div class="footer-bottom">© 2026 Botica Estrella</div>
     </footer>
 
-    <div id="loginModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Iniciar sesión</h2>
-
-        <div class="input-group">
-          <img src="img/correo.png" class="icon-img" alt="Correo" />
-          <input type="email" id="loginEmail" placeholder="Correo electrónico" />
+    <!-- Modal Login -->
+    <div id="loginModal"
+      class="auth-modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+      <div class="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl relative">
+        <button onclick="closeModal()"
+          class="auth-close absolute top-5 right-5 text-slate-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <div
+          class="w-12 h-12 bg-medical-blue/10 text-medical-blue rounded-xl flex items-center justify-center mb-6 mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+            </path>
+          </svg>
         </div>
-
-        <div class="input-group">
-          <input type="password" id="password" placeholder="Contraseña" />
-          <img src="img/ojo.png" class="eye-icon" onclick="togglePassword()" />
+        <h2 class="text-2xl font-black text-slate-800 mb-6 text-center">Acceso Seguro</h2>
+        <div class="space-y-4">
+          <input type="email" id="loginEmail" placeholder="Correo electrónico"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <input type="password" id="password" placeholder="Contraseña"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <p class="text-red-500 text-sm text-center font-bold" id="loginError"></p>
+          <button onclick="validarLogin()"
+            class="auth-submit w-full bg-medical-blue text-white font-bold py-3.5 rounded-xl hover:bg-medical-dark transition-all active:scale-95 shadow-md">Ingresar
+            a mi cuenta</button>
         </div>
-
-        <button onclick="validarLogin()">Ingresar</button>
-
-        <p class="error-msg" id="loginError"></p>
-
-        <p>
-          ¿No tienes cuenta?
-          <span class="link" onclick="openRegister()">Registrarse</span>
-        </p>
+        <p class="text-center text-slate-500 mt-6 text-sm">¿Eres nuevo? <button onclick="openRegister()"
+            class="auth-link text-medical-blue font-bold hover:underline">Regístrate aquí</button></p>
       </div>
     </div>
 
-    <div id="registerModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Crear cuenta</h2>
-
-        <div class="input-group">
-          <img src="img/usuario.png" class="icon-img" alt="Usuario" />
-          <input type="text" id="regNombre" placeholder="Nombre" />
+    <!-- Modal Registro -->
+    <div id="registerModal"
+      class="auth-modal fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+      <div class="bg-white rounded-[2rem] p-8 max-w-md w-full shadow-2xl relative">
+        <button onclick="closeModal()"
+          class="auth-close absolute top-5 right-5 text-slate-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <h2 class="text-2xl font-black text-slate-800 mb-6 text-center">Crear Cuenta</h2>
+        <div class="space-y-4">
+          <input type="text" id="regNombre" placeholder="Nombre completo"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <input type="email" id="regEmail" placeholder="Correo electrónico"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <input type="password" id="regPassword" placeholder="Contraseña"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <input type="password" id="regConfirm" placeholder="Confirmar contraseña"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium" />
+          <p class="text-red-500 text-sm text-center font-bold" id="regError"></p>
+          <button onclick="validarRegistro()"
+            class="auth-submit w-full bg-medical-blue text-white font-bold py-3.5 rounded-xl hover:bg-medical-dark transition-all active:scale-95 shadow-md">Registrarme</button>
         </div>
-
-        <div class="input-group">
-          <img src="img/correo.png" class="icon-img" alt="Correo" />
-          <input type="email" id="regEmail" placeholder="Correo electrónico" />
-        </div>
-
-        <div class="input-group">
-          <img src="img/ojo.png" class="icon-img" alt="Ojo" />
-          <input type="password" id="regPassword" placeholder="Contraseña" />
-        </div>
-
-        <div class="input-group">
-          <img src="img/bloquear.png" class="icon-img" alt="Bloquear" />
-          <input type="password" id="regConfirm" placeholder="Confirmar contraseña" />
-        </div>
-
-        <button onclick="validarRegistro()">Registrarse</button>
-
-        <p class="error-msg" id="regError"></p>
-
-        <p>
-          ¿Ya tienes cuenta?
-          <span class="link" onclick="openLogin()">Iniciar sesión</span>
-        </p>
+        <p class="text-center text-slate-500 mt-6 text-sm">¿Ya tienes cuenta? <button onclick="openLogin()"
+            class="auth-link text-medical-blue font-bold hover:underline">Iniciar sesión</button></p>
       </div>
     </div>
     <script type="module" src="script.js"></script>
