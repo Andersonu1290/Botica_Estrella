@@ -387,94 +387,256 @@ button:hover {
   color: #174a84;
 }
 
-/* ================= PERFIL ================= */
-.profile-container {
+/* ================= PERFIL MEJORADO ================= */
+.profile-page {
+  background-color: #f8fafc; /* Fondo más suave y moderno */
+}
+
+.profile-main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Tarjeta de Perfil Principal */
+.profile-card-modern {
+  background: white;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.profile-header-modern {
+  background: linear-gradient(135deg, #0d4d8b 0%, #1e5fa8 100%);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+/* Contenedor de la imagen con centrado manual estricto */
+.profile-avatar-container {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 15px auto;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  
+  /* Flexbox para centrar la imagen sin distorsionarla */
   display: flex;
   justify-content: center;
-  padding: 107px 80px;
-  background: #f4f4f4;
+  align-items: center;
+  overflow: hidden;
 }
 
-.profile-card {
-  width: 800px;
-  background: white;
-  border-radius: 15px;
-  padding: 40px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-header {
-  margin-bottom: 20px;
-}
-
-.profile-img {
-  width: 130px;
-  height: 130px;
-  margin-bottom: 15px;
-}
-
-.profile-header h2 {
-  font-size: 28px;
-}
-
-.profile-header p {
-  font-size: 16px;
-}
-
-.profile-info {
-  text-align: left;
-  margin: 30px 0;
-}
-
-.info-item {
-  margin-bottom: 15px;
-  font-size: 18px;
-}
-
-.profile-actions button {
-  width: 100%;
-  margin-top: 15px;
-  font-size: 18px;
-  padding: 12px;
-}
-
-.logout {
-  background: #c0392b;
-}
-
-.logout:hover {
-  background: #922b21;
-}
-
-/* HISTORIAL */
-.profile-history {
-  padding: 30px;
-  background: #f4f4f4;
-}
-
-.profile-history h2 {
-  margin-bottom: 20px;
-}
-
-.history-container {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.history-card {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  width: 200px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.history-card span {
+.profile-avatar-container img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   display: block;
-  margin-top: 10px;
+}
+
+.profile-titles h2 {
+  font-size: 26px;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.profile-email {
+  font-size: 15px;
+  opacity: 0.9;
+  margin-bottom: 15px;
+}
+
+.badge-member {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.profile-body-modern {
+  padding: 40px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+.info-box {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-label {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.status-active {
+  color: #10b981;
+}
+
+.profile-actions-modern {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 25px;
+}
+
+.profile-actions-modern button {
+  width: auto;
+  padding: 12px 25px;
+  font-size: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.btn-edit {
+  background: #0d4d8b;
+}
+
+.btn-logout {
+  background: white;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.btn-logout:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* ================= HISTORIAL MEJORADO ================= */
+.profile-history-modern {
+  width: 100%;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.history-header h3 {
+  color: #0f172a;
+  font-size: 22px;
+}
+
+.link-view-all {
+  color: #0d4d8b;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.link-view-all:hover {
+  text-decoration: underline;
+}
+
+.history-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.history-item-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease;
+}
+
+.history-item-card:hover {
+  transform: translateX(5px);
+  border-color: #cbd5e1;
+}
+
+.history-item-icon {
+  font-size: 28px;
+  background: #f1f5f9;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  margin-right: 20px;
+}
+
+.history-item-details {
+  flex: 1;
+}
+
+.history-item-details h4 {
+  font-size: 17px;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.history-item-details p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.history-item-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0d4d8b;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .profile-actions-modern {
+    flex-direction: column;
+  }
+  .profile-actions-modern button {
+    width: 100%;
+  }
+  .history-item-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  .history-item-icon {
+    margin-right: 0;
+  }
 }
 
 /* ================= CARRITO ================= */

@@ -1,103 +1,228 @@
 <!doctype html>
-<html lang="es">
-  <head>
+<html lang="es" class="bg-slate-50 scroll-smooth">
+
+<head>
     <meta charset="UTF-8" />
-    <title>Perfil | Botica Estrella</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Perfil | Botica Estrella 2026</title>
     <link rel="icon" href="logo/botica_estrella-logo.ico" type="image/x-icon">
 
-  </head>
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <body class="profile-page">
-    <!-- NAVBAR -->
-    <header class="navbar">
-      <div class="logo">
-        <img src="img/Botica.png" alt="Botica Estrella" />
-      </div>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: { blue: '#0d4d8b', dark: '#0a3663', light: '#f0f7ff', accent: '#2ecc71', border: '#e2e8f0' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
 
-      <div class="nav-actions">
-        <a href="carrito.html" class="nav-item">
-          <img src="img/carrito.png" alt="Usuario"/>
-          <span>Carrito</span>
-        </a>
+<body class="text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-medical-blue selection:text-white">
 
-        <a href="index.html" class="nav-item">
-          <img src="img/home.png" alt="Home" />
-          <span>Home</span>
-        </a>
-      </div>
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm transition-all">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20 gap-4">
+
+                <div class="flex items-center gap-3 cursor-pointer flex-shrink-0" onclick="window.location.href='index.html'">
+                    <div class="w-10 h-10 bg-gradient-to-br from-medical-blue to-blue-400 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md">★</div>
+                    <span class="text-xl md:text-2xl font-black text-medical-dark tracking-tight hidden sm:block">Botica Estrella</span>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                    <a href="index.html" class="hidden lg:block text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Inicio</a>
+                    <a href="productos.html" class="hidden lg:block text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Productos</a>
+                    <a href="carrito.html" class="relative p-2 text-slate-500 hover:text-medical-blue transition-colors group">
+                        <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-red-500 border-2 border-white rounded-full">2</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <!-- PERFIL -->
-    <section class="profile-container">
-      <div class="profile-card">
-        <div class="profile-header">
-          <img src="img/user.png" class="profile-img" alt="Usuario"/>
-          <h2>Nombre del Usuario</h2> 
-          <p>usuario@email.com</p>
+    <main class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
+        
+        <div class="grid lg:grid-cols-3 gap-8 items-start">
+            
+            <aside class="lg:col-span-1">
+                <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden sticky top-28">
+                    <div class="bg-gradient-to-br from-medical-blue to-blue-500 p-8 flex flex-col items-center text-center">
+                        <div class="w-28 h-28 bg-white rounded-full p-1 mb-4 shadow-lg">
+                            <img src="img/user.png" alt="Usuario" class="w-full h-full object-cover rounded-full" />
+                        </div>
+                        <h2 class="text-2xl font-black text-white">Nombre del Usuario</h2>
+                        <p class="text-blue-100 font-medium">usuario@email.com</p>
+                        <span class="mt-3 bg-white/20 text-white text-xs font-bold px-4 py-1.5 rounded-full backdrop-blur-sm">
+                            Miembro Premium
+                        </span>
+                    </div>
+                    
+                    <div class="p-6 bg-white space-y-3">
+                        <button class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3 rounded-xl border border-slate-200 transition-colors">
+                            <svg class="w-5 h-5 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            Editar Perfil
+                        </button>
+                        <button class="w-full flex items-center justify-center gap-2 text-red-500 font-bold py-3 rounded-xl hover:bg-red-50 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
+                    <h3 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                        Datos Personales
+                    </h3>
+                    
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Teléfono</span>
+                            <span class="text-slate-800 font-bold text-lg">+51 999 999 999</span>
+                        </div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Dirección</span>
+                            <span class="text-slate-800 font-bold text-lg">Av. Principal 123</span>
+                        </div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Miembro desde</span>
+                            <span class="text-slate-800 font-bold text-lg">2026</span>
+                        </div>
+
+                        <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+                            <span class="text-xs font-bold text-green-600 uppercase tracking-wider block mb-1">Estado de la cuenta</span>
+                            <span class="text-green-700 font-black text-lg flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Verificado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                            Historial de Compras
+                        </h3>
+                        <a href="#" class="text-medical-blue text-sm font-bold hover:underline">Ver todo</a>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-2xl hover:border-medical-blue/30 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center">
+                                    <span class="text-2xl">💊</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">Paracetamol 120mg</h4>
+                                    <p class="text-xs text-slate-500">Comprado el 15 May 2026</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-black text-slate-900">S/. 2.00</span>
+                                <span class="text-xs font-bold text-green-500">Entregado</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-2xl hover:border-medical-blue/30 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center justify-center">
+                                    <span class="text-2xl">⚕️</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800">Ibuprofeno 800mg</h4>
+                                    <p class="text-xs text-slate-500">Comprado el 10 May 2026</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-black text-slate-900">S/. 15.00</span>
+                                <span class="text-xs font-bold text-green-500">Entregado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-medical-dark text-white pt-16 pb-8 mt-12 border-t-[6px] border-medical-blue">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+            <div class="lg:col-span-1">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-medical-blue font-black text-xl">★</div>
+                    <span class="text-2xl font-black tracking-tight">Botica Estrella</span>
+                </div>
+                <p class="text-blue-200/80 leading-relaxed text-sm">Plataforma e-commerce farmacéutica de última generación. Cuidando tu salud con tecnología, rapidez y confianza.</p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-6 text-white tracking-wide">Navegación</h3>
+                <ul class="space-y-3">
+                    <li><a href="index.html" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Inicio</a></li>
+                    <li><a href="productos.html" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Catálogo de Productos</a></li>
+                    <li><a href="nosotros.html" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Sobre Nosotros</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-6 text-white tracking-wide">Legal y Ayuda</h3>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Términos y Condiciones</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Políticas de Privacidad</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Libro de Reclamaciones</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-6 text-white tracking-wide">Contáctanos</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-medical-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-blue-200 block">Llámanos</p>
+                            <p class="font-bold text-white">+51 924 412 183</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-medical-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-blue-200 block">Correo de soporte</p>
+                            <p class="font-bold text-white">soporte@estrella.com</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <div class="profile-info">
-          <div class="info-item">
-            <strong>Teléfono:</strong>
-            <span>+51 999 999 999</span>
-          </div>
-
-          <div class="info-item">
-            <strong>Dirección:</strong>
-            <span>Av. Principal 123</span>
-          </div>
-
-          <div class="info-item">
-            <strong>Miembro desde:</strong>
-            <span>2026</span>
-          </div>
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-700/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-slate-400 text-sm">
+                © 2026 Botica Estrella. Todos los derechos reservados.
+            </div>
+            <div class="text-slate-400 text-sm font-medium flex items-center gap-2">
+                <span>Desarrollado por</span>
+                <span class="bg-white text-medical-dark px-2 py-0.5 rounded font-black text-xs tracking-wider">Wansd System</span>
+            </div>
         </div>
-
-        <div class="profile-actions">
-          <button>Editar Perfil</button>
-          <button class="logout">Cerrar Sesión</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- HISTORIAL -->
-    <section class="profile-history">
-      <h2>Historial de Compras</h2>
-
-      <div class="history-container">
-        <div class="history-card">
-          <p>Paracetamol 120mg</p>
-          <span>S/. 2.00</span>
-        </div>
-
-        <div class="history-card">
-          <p>Ibuprofeno 800mg</p>
-          <span>S/. 15.00</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-content">
-        <div>
-          <h3>Botica Estrella</h3>
-          <a href="#">Cuidando tu bienestar</a>
-        </div>
-
-        <div>
-          <h3>Contacto</h3>
-          <a href="#">+51 924 412 183</a>
-        </div>
-
-        <div>
-          <h3>Enlaces</h3>
-          <a href="nosotros.html">Sobre Nosotros</a>
-        </div>
-      </div>
-
-      <div class="footer-bottom">© 2026 Botica Estrella+</div>
     </footer>
-  </body>
+
+    <script type="module" src="script.js"></script>
+</body>
 </html>
