@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* 🌟 Aquí inyectamos tus colores corporativos usando la nueva sintaxis de Tailwind v4 */
+@theme {
+  --color-medical-blue: #0d4d8b;
+  --color-medical-dark: #0a3663;
+  --color-medical-light: #f0f7ff;
+  --color-medical-accent: #2ecc71;
+  --color-medical-border: #e2e8f0;
+}
