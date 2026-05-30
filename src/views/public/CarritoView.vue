@@ -25,8 +25,12 @@
             <div class="col-span-1"></div>
           </div>
 
-          <div class="divide-y divide-slate-100">
-            <div v-for="item in carritoStore.items" :key="item.producto.idProducto" class="p-6 flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:gap-6 items-center group">
+          <div class="divide-y divide-slate-100 relative">
+            <div v-if="carritoStore.cargando" class="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
+               <span class="animate-spin w-8 h-8 border-4 border-medical-blue border-t-transparent rounded-full"></span>
+            </div>
+
+            <div v-for="item in carritoStore.items" :key="item.idItem" class="p-6 flex flex-col sm:grid sm:grid-cols-12 gap-4 sm:gap-6 items-center group" :class="{'opacity-50': procesandoId === item.idItem}">
               
               <div class="col-span-12 sm:col-span-6 flex items-center gap-4 w-full">
                 <div class="w-20 h-20 bg-slate-50 rounded-xl flex items-center justify-center flex-shrink-0 p-2 contenedor-imagen-fija">
@@ -43,13 +47,13 @@
 
               <div class="col-span-12 sm:col-span-3 flex justify-center w-full mt-4 sm:mt-0">
                 <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg overflow-hidden h-10 w-32">
-                  <button @click="disminuir(item)" :disabled="item.cantidad <= 1" class="w-10 h-full flex justify-center items-center text-slate-500 hover:bg-slate-200 disabled:opacity-50 transition-colors">
+                  <button @click="disminuir(item)" :disabled="item.cantidad <= 1 || procesandoId === item.idItem" class="w-10 h-full flex justify-center items-center text-slate-500 hover:bg-slate-200 disabled:opacity-50 transition-colors">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"></path></svg>
                   </button>
                   <div class="flex-1 text-center font-black text-sm text-slate-800 select-none">
                     {{ item.cantidad }}
                   </div>
-                  <button @click="aumentar(item)" :disabled="item.cantidad >= (item.producto.stockActual ?? item.producto.stock ?? 0)" class="w-10 h-full flex justify-center items-center text-slate-500 hover:bg-slate-200 disabled:opacity-50 transition-colors">
+                  <button @click="aumentar(item)" :disabled="item.cantidad >= (item.producto.stockActual ?? item.producto.stock ?? 0) || procesandoId === item.idItem" class="w-10 h-full flex justify-center items-center text-slate-500 hover:bg-slate-200 disabled:opacity-50 transition-colors">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                   </button>
                 </div>
@@ -60,7 +64,7 @@
               </div>
 
               <div class="col-span-12 sm:col-span-1 flex justify-end w-full mt-2 sm:mt-0">
-                <button @click="carritoStore.eliminarProducto(item.producto.idProducto)" class="text-slate-300 hover:text-red-500 transition-colors p-2" title="Eliminar producto">
+                <button @click="eliminar(item)" :disabled="procesandoId === item.idItem" class="text-slate-300 hover:text-red-500 disabled:opacity-50 transition-colors p-2" title="Eliminar producto">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
               </div>
@@ -92,7 +96,7 @@
             <span class="text-3xl font-black text-medical-blue">S/. {{ formatPrecio(carritoStore.subtotalPrecio) }}</span>
           </div>
 
-          <button @click="router.push('/checkout')" class="w-full bg-slate-900 text-white h-14 rounded-xl font-black text-lg hover:bg-medical-blue transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2 mb-4">
+          <button @click="irAPagar" class="w-full bg-slate-900 text-white h-14 rounded-xl font-black text-lg hover:bg-medical-blue transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2 mb-4">
             Ir a Pagar
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </button>
@@ -108,24 +112,55 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { carritoStore } from '@/store/carrito';
+import { authStore } from '@/store/auth';
 import { apiClient } from '@/services/apiClient';
 
 const router = useRouter();
+const procesandoId = ref(null); // Variable para bloquear botones de una fila mientras se actualiza en BD
 
 const formatPrecio = (precio) => Number(precio).toFixed(2);
 const subtotalSinIgv = computed(() => carritoStore.subtotalPrecio / 1.18);
 const igvCalculado = computed(() => carritoStore.subtotalPrecio - subtotalSinIgv.value);
 
-const aumentar = (item) => {
+// Actualizamos en BD agregando +1 a la cantidad existente
+const aumentar = async (item) => {
   const stock = item.producto.stockActual ?? item.producto.stock ?? 0;
-  if (item.cantidad < stock) item.cantidad++;
+  if (item.cantidad < stock && authStore.estaLogueado) {
+    procesandoId.value = item.idItem;
+    await carritoStore.agregarBD(authStore.usuarioActual.idUsuario, item.producto, 1);
+    procesandoId.value = null;
+  }
 };
 
-const disminuir = (item) => {
-  if (item.cantidad > 1) item.cantidad--;
+// Actualizamos en BD restando -1 a la cantidad existente
+const disminuir = async (item) => {
+  if (item.cantidad > 1 && authStore.estaLogueado) {
+    procesandoId.value = item.idItem;
+    // Mandamos un -1 para que el backend reste de la cantidad actual
+    await carritoStore.agregarBD(authStore.usuarioActual.idUsuario, item.producto, -1);
+    procesandoId.value = null;
+  }
+};
+
+// Eliminamos físicamente la fila de la BD usando el id_item
+const eliminar = async (item) => {
+  if (authStore.estaLogueado) {
+    procesandoId.value = item.idItem;
+    await carritoStore.eliminarProductoBD(authStore.usuarioActual.idUsuario, item.idItem);
+    procesandoId.value = null;
+  }
+};
+
+// Verificamos sesión antes de mandarlo al checkout
+const irAPagar = () => {
+  if (!authStore.estaLogueado) {
+    router.push('/login?redirect=/checkout');
+  } else {
+    router.push('/checkout');
+  }
 };
 </script>
 

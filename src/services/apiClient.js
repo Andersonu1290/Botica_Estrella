@@ -1,4 +1,4 @@
-const BASE_URL = (window.VITE_API_URL || '/api') + '/v1';
+const BASE_URL = (import.meta.env.VITE_API_URL || '/api') + '/v1';
 
 export const apiClient = {
   async obtenerProductos() {
@@ -47,6 +47,30 @@ export const apiClient = {
     } catch (error) {
       console.error("Error crítico procesando venta:", error);
       throw error; 
+    }
+  },
+
+// 🔥 NUEVA FUNCIÓN (FASE 2): Obtener el historial del cliente logueado
+  async obtenerMisCompras(idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/ventas/mis-compras/${idUsuario}`);
+      if (!respuesta.ok) throw new Error('No se pudo cargar el historial de compras.');
+      return await respuesta.json();
+    } catch (error) {
+      console.error("Error en apiClient al traer compras:", error);
+      return [];
+    }
+  },
+
+// 🔥 NUEVA FUNCIÓN (FASE 3): Obtener listado dinámico de categorías
+  async obtenerCategorias() {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/categorias`);
+      if (!respuesta.ok) throw new Error('Error al obtener categorías');
+      return await respuesta.json();
+    } catch (error) {
+      console.error("Error cargando categorías:", error);
+      return [];
     }
   },
 

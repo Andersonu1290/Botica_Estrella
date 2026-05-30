@@ -76,14 +76,16 @@
 
         <button 
           @click="agregarAlCarrito"
-          :disabled="stockDisponible === 0"
+          :disabled="stockDisponible === 0 || procesando"
           class="w-full h-14 rounded-xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-lg active:scale-95 disabled:active:scale-100 disabled:opacity-50 disabled:cursor-not-allowed"
           :class="stockDisponible > 0 ? 'bg-medical-blue text-white hover:bg-medical-dark hover:shadow-medical-blue/30' : 'bg-slate-200 text-slate-400'"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg v-if="!procesando" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
           </svg>
-          {{ stockDisponible > 0 ? 'Agregar al Carrito' : 'Sin Stock' }}
+          <span class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full" v-else></span>
+          
+          {{ procesando ? 'Guardando en BD...' : (stockDisponible > 0 ? 'Agregar al Carrito' : 'Sin Stock') }}
         </button>
 
       </div>
@@ -93,14 +95,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { apiClient } from '@/services/apiClient';
 import { carritoStore } from '@/store/carrito';
+import { authStore } from '@/store/auth';
 
 const route = useRoute();
+const router = useRouter();
+
 const producto = ref(null);
 const cargando = ref(true);
 const cantidad = ref(1);
+const procesando = ref(false); // Estado para evitar doble clic mientras guarda en BD
 
 onMounted(async () => {
   // Capturamos el ID de la URL
@@ -135,15 +141,30 @@ const decrementar = () => {
   if (cantidad.value > 1) cantidad.value--;
 };
 
-// Dispara la acción de guardar en el store global
-const agregarAlCarrito = () => {
-  carritoStore.agregar(producto.value, cantidad.value);
-  
-  // Pequeña alerta nativa para que el cliente sepa que funcionó
-  alert(`Se agregaron ${cantidad.value} unidades de ${producto.value.nombre} al carrito.`);
-  
-  // Reseteamos el selector a 1 por comodidad
-  cantidad.value = 1;
+// Dispara la acción de guardar en la base de datos de forma asíncrona
+const agregarAlCarrito = async () => {
+  // 1. Verificamos que el usuario tenga sesión
+  if (!authStore.estaLogueado) {
+    // Redirigimos al login, pero guardamos en la URL a dónde debe volver tras loguearse
+    router.push(`/login?redirect=/producto/${producto.value.idProducto}`);
+    return;
+  }
+
+  procesando.value = true;
+  try {
+    // 2. Enviamos el ID del cliente a la BD junto con el producto
+    await carritoStore.agregarBD(authStore.usuarioActual.idUsuario, producto.value, cantidad.value);
+    
+    // Alerta de éxito
+    alert(`Se agregaron ${cantidad.value} unidades de ${producto.value.nombre} a tu carrito.`);
+    
+    // Reseteamos el selector a 1 por comodidad
+    cantidad.value = 1;
+  } catch (error) {
+    alert("Hubo un error al agregar el producto. Inténtalo de nuevo.");
+  } finally {
+    procesando.value = false;
+  }
 };
 
 // Helper de precio

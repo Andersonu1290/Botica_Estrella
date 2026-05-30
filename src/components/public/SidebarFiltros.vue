@@ -14,9 +14,9 @@
         <div class="relative">
           <select v-model="filtrosStore.categoria" class="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl py-3 px-4 appearance-none outline-none focus:ring-2 focus:ring-medical-blue cursor-pointer transition-colors">
             <option value="todos">Todos los Productos</option>
-            <option value="1">Medicamentos (1)</option>
-            <option value="2">Cuidado Personal (2)</option>
-            <option value="3">Primeros Auxilios (3)</option>
+            <option v-for="cat in listaCategorias" :key="cat.idCategoria" :value="cat.idCategoria">
+              {{ cat.nombre }}
+            </option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -69,7 +69,17 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { filtrosStore } from '@/store/filtros';
+import { apiClient } from '@/services/apiClient';
+
+// 🌟 Variable reactiva para almacenar la lista de categorías de BD
+const listaCategorias = ref([]);
+
+// 🌟 Cuando el componente se carga en pantalla, pedimos la info al backend
+onMounted(async () => {
+  listaCategorias.value = await apiClient.obtenerCategorias();
+});
 
 const limpiarFiltros = () => {
   filtrosStore.busqueda = '';

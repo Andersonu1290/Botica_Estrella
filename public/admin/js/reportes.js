@@ -29,18 +29,47 @@ async function cargarDatosDashboard() {
         // --- B. RENDERIZAR TABLA DE AUDITORÍA EN VIVO ---
         renderizarTablaVentas(dashboardInfo.ultimasVentas);
 
-        // --- C. PROCESAR DATOS Y RENDERIZAR GRÁFICOS ---
-        // CORRECCIÓN: Usar los nombres exactos definidos en ReporteDashboardDTO.java
+        // --- C. PROCESAR DATOS Y RENDERIZAR GRÁFICOS (CON MEMORIA DE COLOR) ---
         const topProd = dashboardInfo.topProd || []; 
         const catStock = dashboardInfo.catStock || []; 
             
-        const topLabels = topProd.map(str => str.split(' (Vendidos:')[0]);
-        const topData = topProd.map(str => parseInt(str.match(/\d+/)?.[0] || 0));
+        // 1. Creamos la memoria del diccionario de colores
+        const diccionarioColores = {};
+        
+        // 2. Procesar Categorías (Gráfico de Dona)
+        const catLabels = [];
+        const catData = [];
+        const catColors = [];
+
+        catStock.forEach((item, index) => {
+            // Java envía: "Categoria||Stock"
+            const [categoria, stock] = item.split('||');
+            catLabels.push(categoria);
+            catData.push(parseInt(stock || 0));
+
+            // Le asignamos un color de la paleta y lo GUARDAMOS en memoria
+            const colorAsignado = techPalette[index % techPalette.length];
+            diccionarioColores[categoria] = colorAsignado; 
+            catColors.push(colorAsignado);
+        });
+
+        // 3. Procesar Top Productos (Gráfico de Barras)
+        const topLabels = [];
+        const topData = [];
+        const topColors = [];
+
+        topProd.forEach(item => {
+            // Java envía: "Producto||Ventas||Categoria"
+            const [producto, ventas, categoria] = item.split('||');
+            topLabels.push(producto);
+            topData.push(parseInt(ventas || 0));
+
+            // Buscamos el color de su familia. Si no tiene, se pinta gris claro.
+            const colorHeredado = diccionarioColores[categoria] || '#9ca3af';
+            topColors.push(colorHeredado);
+        });
             
-        const catLabels = catStock.map(str => str.split(':')[0]);
-        const catData = catStock.map(str => parseInt(str.split(':')[1] || 0));
-            
-        inicializarGraficos(topLabels, topData, catLabels, catData);
+        inicializarGraficos(topLabels, topData, topColors, catLabels, catData, catColors);
 
     } catch (error) {
         console.error("Error al cargar las métricas del dashboard:", error);
@@ -87,7 +116,7 @@ function renderizarTablaVentas(ventas) {
     });
 }
 
-function inicializarGraficos(topLabels, topData, catLabels, catData) {
+function inicializarGraficos(topLabels, topData, topColors, catLabels, catData, catColors) {
     Chart.defaults.color = '#9ca3af';
     Chart.defaults.font.family = "'Inter', sans-serif";
 
@@ -95,7 +124,7 @@ function inicializarGraficos(topLabels, topData, catLabels, catData) {
     if (window.miBarChart) window.miBarChart.destroy();
     if (window.miDoughnutChart) window.miDoughnutChart.destroy();
 
-    // --- GRÁFICO DE BARRAS ---
+    // --- GRÁFICO DE BARRAS (Top Productos con color heredado) ---
     const ctxBar = document.getElementById('barChart');
     if (ctxBar) {
         window.miBarChart = new Chart(ctxBar.getContext('2d'), {
@@ -105,7 +134,7 @@ function inicializarGraficos(topLabels, topData, catLabels, catData) {
                 datasets: [{
                     label: 'Unidades Vendidas',
                     data: topData,
-                    backgroundColor: techPalette,
+                    backgroundColor: topColors, // 🌟 AHORA USA EL ARREGLO DE COLORES HEREDADOS
                     borderWidth: 1,
                     borderRadius: 6
                 }]
@@ -122,7 +151,7 @@ function inicializarGraficos(topLabels, topData, catLabels, catData) {
         });
     }
 
-    // --- GRÁFICO DE DONA ---
+    // --- GRÁFICO DE DONA (Categorías y su color base) ---
     const ctxDoughnut = document.getElementById('doughnutChart');
     if (ctxDoughnut) {
         window.miDoughnutChart = new Chart(ctxDoughnut.getContext('2d'), {
@@ -131,7 +160,7 @@ function inicializarGraficos(topLabels, topData, catLabels, catData) {
                 labels: catLabels,
                 datasets: [{
                     data: catData,
-                    backgroundColor: techPalette,
+                    backgroundColor: catColors, // 🌟 AHORA USA EL ARREGLO DE COLORES BASE
                     borderColor: '#1f2937',
                     borderWidth: 2,
                     hoverOffset: 12

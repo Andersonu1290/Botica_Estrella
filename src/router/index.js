@@ -13,6 +13,7 @@ import PerfilView from '../views/public/PerfilView.vue'
 import NosotrosView from '../views/public/NosotrosView.vue'
 import CheckoutView from '../views/public/CheckoutView.vue'
 import ConfirmacionView from '../views/public/ConfirmacionView.vue'
+import LoginPublicoView from '@/views/public/LoginPublicoView.vue'
 
 // Vistas del Admin
 import Login from '../views/admin/Login.vue'
@@ -42,6 +43,7 @@ const router = createRouter({
         { path: 'perfil', name: 'perfil', component: PerfilView },
         { path: 'nosotros', name: 'nosotros', component: NosotrosView },
         { path: 'checkout', name: 'checkout', component: CheckoutView },
+        { path: 'login', name: 'loginPublico', component: LoginPublicoView },
         { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView }
       ]
     },

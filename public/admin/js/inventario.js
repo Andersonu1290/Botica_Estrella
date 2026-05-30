@@ -61,6 +61,11 @@ async function cargarInventario() {
         }
 
         tbody.innerHTML = "";
+        
+        // 🔥 LA SOLUCIÓN DEFINITIVA: Armamos la ruta exactamente como en Vue
+        // Si no existe la variable, usamos la ruta absoluta directa al puerto de Java.
+        const URL_BASE = window.VITE_API_URL || 'http://localhost:8089/api';
+        const RUTA_API = URL_BASE.endsWith('/v1') ? URL_BASE : URL_BASE + '/v1';
 
         // Procesar y dibujar filas dinámicamente
         productos.forEach(p => {
@@ -80,10 +85,10 @@ async function cargarInventario() {
                 ? '<span class="badge badge-alert">ALERTA</span>' 
                 : '<span class="badge badge-optimal">ÓPTIMO</span>';
 
-            // Estructura visual de la imagen respetando el contenedor estático
+            // 🔥 Inyectamos RUTA_API para asegurar el /v1
             const imgHtml = `
                 <img 
-                    src="api/v1/productos/${idProd}/imagen"
+                    src="${RUTA_API}/productos/${idProd}/imagen"
                     alt="${p.nombre}"
                     class="product-img"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"

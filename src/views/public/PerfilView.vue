@@ -22,21 +22,21 @@
             <div class="w-24 h-24 bg-white rounded-full mx-auto border-4 border-white shadow-md flex items-center justify-center text-4xl font-black text-medical-blue mb-4">
               {{ inicialesUsuario }}
             </div>
-            <h2 class="text-xl font-black text-slate-800">{{ usuarioMock.nombre }}</h2>
-            <p class="text-slate-500 mb-6">{{ usuarioMock.correo }}</p>
+            <h2 class="text-xl font-black text-slate-800">{{ usuarioActivo.username }}</h2>
+            <p class="text-slate-500 mb-6">Cliente Web</p>
             
             <div class="flex flex-col gap-3 text-left bg-slate-50 p-4 rounded-xl border border-slate-100">
               <div class="flex justify-between items-center">
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Documento</span>
-                <span class="font-bold text-slate-700">{{ usuarioMock.documento }}</span>
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Rol</span>
+                <span class="font-bold text-slate-700">{{ usuarioActivo.rol || 'CLIENTE' }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Teléfono</span>
-                <span class="font-bold text-slate-700">{{ usuarioMock.telefono }}</span>
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Estado</span>
+                <span class="font-bold text-emerald-500">Activo</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Miembro desde</span>
-                <span class="font-bold text-slate-700">Mayo 2026</span>
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Compras</span>
+                <span class="font-bold text-slate-700">{{ comprasRealizadas.length }}</span>
               </div>
             </div>
           </div>
@@ -60,27 +60,32 @@
           </div>
 
           <div class="p-0 md:p-4">
-            <div class="overflow-x-auto">
+            <div v-if="comprasRealizadas.length === 0" class="text-center py-12 text-slate-500">
+              Aún no has realizado ninguna compra.
+            </div>
+
+            <div v-else class="overflow-x-auto">
               <table class="w-full text-left min-w-[600px]">
                 <thead>
                   <tr class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                    <th class="p-4 md:px-6 md:py-4">Ticket</th>
+                    <th class="p-4 md:px-6 md:py-4">Detalle del Pedido</th>
                     <th class="p-4 md:px-6 md:py-4">Fecha</th>
                     <th class="p-4 md:px-6 md:py-4 text-right">Total</th>
                     <th class="p-4 md:px-6 md:py-4 text-center">Estado</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
-                  <tr v-for="orden in ordenesMock" :key="orden.ticket" class="hover:bg-slate-50 transition-colors group cursor-pointer">
+                  <tr v-for="orden in comprasRealizadas" :key="orden.ticket" class="hover:bg-slate-50 transition-colors group cursor-pointer">
                     <td class="p-4 md:px-6 md:py-5">
                       <span class="font-bold text-slate-800 group-hover:text-medical-blue transition-colors">{{ orden.ticket }}</span>
-                      <p class="text-xs text-slate-500 mt-1">{{ orden.metodoPago }}</p>
+                      <p class="text-xs font-black text-medical-blue mt-1 uppercase">{{ orden.producto }}</p>
+                      <p class="text-xs text-slate-500 mt-1">Pago: {{ orden.metodoPago }}</p>
                     </td>
                     <td class="p-4 md:px-6 md:py-5 text-slate-600 font-medium">
-                      {{ orden.fecha }}
+                      {{ formatearFechaServidor(orden.fecha) }}
                     </td>
                     <td class="p-4 md:px-6 md:py-5 text-right">
-                      <span class="font-black text-slate-900">S/. {{ orden.total.toFixed(2) }}</span>
+                      <span class="font-black text-slate-900">S/. {{ Number(orden.total).toFixed(2) }}</span>
                     </td>
                     <td class="p-4 md:px-6 md:py-5 text-center">
                       <span 
@@ -99,11 +104,6 @@
               </table>
             </div>
 
-            <div class="p-6 text-center border-t border-slate-100">
-              <button class="text-sm font-bold text-slate-400 hover:text-medical-blue transition-colors">
-                Cargar pedidos anteriores
-              </button>
-            </div>
           </div>
 
         </div>
@@ -114,56 +114,43 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { authStore } from '@/store/auth';
+import { apiClient } from '@/services/apiClient';
 
 const router = useRouter();
+const comprasRealizadas = ref([]);
 
-// DATOS SIMULADOS (Mock) - En el futuro vendrán de Spring Boot + JWT
-const usuarioMock = {
-  nombre: "Cliente E-commerce",
-  correo: "cliente@boticaestrella.com",
-  documento: "74582196",
-  telefono: "+51 987 654 321"
-};
+// 🌟 Obtenemos al usuario real de la tienda reactiva
+const usuarioActivo = computed(() => authStore.usuarioActual || { username: 'Invitado' });
 
-// Genera las iniciales para el Avatar (ej: "CE")
 const inicialesUsuario = computed(() => {
-  return usuarioMock.nombre
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase();
+  return usuarioActivo.value.username
+    ? usuarioActivo.value.username.substring(0, 2).toUpperCase()
+    : 'US';
 });
 
-// LISTA DE COMPRAS SIMULADAS
-const ordenesMock = [
-  {
-    ticket: "TCK-202605291258",
-    fecha: "29 May 2026, 12:58 PM",
-    metodoPago: "Tarjeta de Crédito",
-    total: 100.40,
-    estado: "COMPLETADA"
-  },
-  {
-    ticket: "TCK-202605200915",
-    fecha: "20 May 2026, 09:15 AM",
-    metodoPago: "Yape / Plin",
-    total: 35.50,
-    estado: "COMPLETADA"
-  },
-  {
-    ticket: "TCK-202604151642",
-    fecha: "15 Abr 2026, 04:42 PM",
-    metodoPago: "Efectivo",
-    total: 125.30,
-    estado: "ANULADA"
+// 🌟 Consultamos a Spring Boot cuando la pantalla carga
+onMounted(async () => {
+  if (authStore.estaLogueado && usuarioActivo.value.idUsuario) {
+    comprasRealizadas.value = await apiClient.obtenerMisCompras(usuarioActivo.value.idUsuario);
+  } else {
+    router.push('/login'); // Redirigimos si intenta entrar sin sesión
   }
-];
+});
+
+// 🌟 Formateamos la fecha que llega desde MySQL (Timestamp)
+const formatearFechaServidor = (fechaStr) => {
+  if (!fechaStr) return 'Fecha no disponible';
+  return new Date(fechaStr).toLocaleDateString('es-PE', {
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+};
 
 const cerrarSesion = () => {
-  alert("Sesión cerrada (Simulación). Redirigiendo al inicio...");
+  authStore.cerrarSesion();
   router.push('/');
 };
 </script>

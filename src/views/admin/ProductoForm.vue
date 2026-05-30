@@ -36,7 +36,7 @@
                         <option value="" disabled selected>Cargando familias...</option>
                     </select>
                     <!-- CORRECCIÓN DE RUTA: Apunta al path '/categorias' de tu Router de Vue -->
-                    <a href="/categorias" class="btn-action btn-edit" style="padding: 14px 20px; font-size: 14px;">Gestionar Categorías</a>
+                    <a href="/admin/categorias" class="btn-action btn-edit" style="padding: 14px 20px; font-size: 14px;">Gestionar Categorías</a>
                 </div>
 
                 <div class="flex-row gap-15">
