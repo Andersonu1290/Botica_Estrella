@@ -123,7 +123,14 @@ const procesarPago = async () => {
         }
     }
     
-    carritoStore.vaciarBD(usuarioActivo.id);
+    // 1. Sacamos los datos del cliente de la memoria del navegador
+    const usuarioGuardado = JSON.parse(sessionStorage.getItem('usuarioActivo'));
+      
+    // 2. Ahora sí, le pasamos su ID exacto a la función para vaciar su carrito
+    if (usuarioGuardado) {
+        // Nota: dependiendo de cómo esté tu modelo, podría ser .id o .idUsuario
+        carritoStore.vaciarBD(usuarioGuardado.idUsuario); 
+    }
     router.push('/confirmacion'); // Aquí crearemos la página de éxito
   } catch (err) {
     console.error(err);
