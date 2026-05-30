@@ -50,7 +50,7 @@ const procesando = ref(false);
 const mensajeError = ref('');
 
 const form = reactive({ username: '', password: '' });
-const BASE_URL = (window.VITE_API_URL || '/api') + '/v1';
+const BASE_URL = (import.meta.env.VITE_API_URL || '/api') + '/v1'; // ✅ CORREGIDO
 
 const procesarFormulario = async () => {
   procesando.value = true;
