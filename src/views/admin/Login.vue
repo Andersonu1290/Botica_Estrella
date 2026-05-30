@@ -91,8 +91,9 @@ export default {
       intervaloVerificacion: null
     }
   },
-  mounted() {
-
+mounted() {
+    // 🌟 ESTA ES LA LÍNEA MÁGICA QUE FALTABA
+    window.VITE_API_URL = import.meta.env.VITE_API_URL;
     
     // 1. Iniciamos un vigilante silencioso para ver cuándo el login es exitoso
     this.vigilarExitoLogin();
