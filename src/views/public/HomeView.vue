@@ -86,7 +86,7 @@ const cargando = ref(true);
 onMounted(async () => {
   // Limpieza de filtros
   filtrosStore.busqueda = '';
-  filtrosStore.precioMaximo = 999999;
+  filtrosStore.precioMaximo = 200;
   filtrosStore.categoria = 'todos';
   filtrosStore.soloStock = false;
 
