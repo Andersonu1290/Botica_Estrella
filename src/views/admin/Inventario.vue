@@ -142,6 +142,8 @@
 export default {
   name: 'InventarioView',
   mounted() {
+
+    console.log("INVENTARIO MOUNTED");
     // 1. Inyectamos la variable de entorno en memoria global para api.js
     window.VITE_API_URL = import.meta.env.VITE_API_URL;
 
