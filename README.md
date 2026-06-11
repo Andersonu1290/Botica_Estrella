@@ -1,4 +1,4 @@
-## 📖 Descripción del Proyecto
+## 📖 Descripción del Proyecto.
 
 **Botica Estrella** es una plataforma web dual que combina una **tienda virtual (e-commerce)** para el cliente final y un **panel administrativo (backoffice)** para la gestión interna de la farmacia. El sistema permite realizar compras en línea, visualizar catálogos, y administrar de manera centralizada el inventario, el Kardex, las mermas, los reportes y las ventas físicas.
 
