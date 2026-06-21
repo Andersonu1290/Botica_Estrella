@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -25,5 +26,10 @@ export default defineConfig({
         secure: false,
       }
     }
+  },
+  // 🤖 NUEVO: Configuración para el robot de pruebas (Vitest)
+  test: {
+    environment: 'jsdom', // Usa el navegador invisible en memoria
+    globals: true         // Permite usar funciones de prueba sin importarlas a cada rato
   }
 })

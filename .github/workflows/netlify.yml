@@ -23,7 +23,10 @@ jobs:
           cache: 'npm'
 
       - name: Instalar dependencias
-        run: npm install
+        run: npm ci
+
+      - name: Ejecutar Pruebas Unitarias (Vitest)
+        run: npm run test
 
       - name: Construir el proyecto (Build)
         run: npm run build
