@@ -24,10 +24,9 @@
       
       <div class="flex items-center justify-between mt-auto">
         <span class="text-2xl font-black text-slate-900">S/. {{ formatPrecio(producto.precio) }}</span>
-        <!-- SOLO SE AGREGA EL @click -->
         <button 
-          @click="agregarProducto" 
-          class="bg-slate-100 text-medical-blue hover:bg-medical-blue hover:text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm"
+          @click.stop="agregarProducto" 
+          class="bg-slate-100 text-medical-blue hover:bg-medical-blue hover:text-white w-10 h-10 rounded-xl flex items-center justify-center transition-all shadow-sm font-bold text-lg select-none cursor-pointer active:scale-95 duration-100"
         >
           +
         </button>
@@ -57,16 +56,19 @@ export default {
     }
   },
   methods: {
-    // Helper para asegurar que el precio siempre tenga 2 decimales
     formatPrecio(precio) {
       return Number(precio).toFixed(2);
     },
-    // SOLO SE AGREGA ESTE MÉTODO NUEVO
     agregarProducto() {
       const idUsuario = 1; 
+      
+      // 🌟 AVISO TEMPORAL: Para comprobar que el botón sí responde al clic en tu navegador
+      alert(`Agregando al carrito: ${this.producto.nombre}`);
+      
       carritoStore.agregarBD(idUsuario, this.producto, 1);
     }
   }
+
 }
 </script>
 
