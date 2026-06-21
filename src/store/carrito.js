@@ -39,6 +39,20 @@ export const carritoStore = reactive({
       alert("Debes iniciar sesión para agregar productos al carrito.");
       return;
     }
+
+    // 🔥 NUEVA VALIDACIÓN: Control de Stock Estricto
+    const stockDisponible = producto.stockActual ?? producto.stock ?? 0;
+    
+    // Buscamos si el producto ya está en nuestro carrito local para saber la cantidad actual
+    const itemExistente = this.items.find(i => i.producto && i.producto.idProducto === producto.idProducto);
+    const cantidadActualEnCarrito = itemExistente ? itemExistente.cantidad : 0;
+
+    // Solo bloqueamos si estamos sumando (+1). Si cantidadAñadida es negativa (-1), dejamos pasar para que pueda restar
+    if (cantidadAñadida > 0 && (cantidadActualEnCarrito + cantidadAñadida > stockDisponible)) {
+      alert(`Stock insuficiente. Solo hay ${stockDisponible} unidades disponibles de ${producto.nombre}.`);
+      return; // 🛑 Bloqueamos la petición a Spring Boot / MySQL
+    }
+
     try {
       await fetch(`${BASE_URL}/carrito/agregar`, {
         method: 'POST',
@@ -69,17 +83,12 @@ export const carritoStore = reactive({
   // 4. Limpiar todo tras pagar
   async vaciarBD(idUsuario) {
     try {
-      const res = await fetch(
-        `${BASE_URL}/carrito/vaciar/${idUsuario}`,
-        {
-          method: 'DELETE'
-        }
-      );
-    
+      const res = await fetch(`${BASE_URL}/carrito/vaciar/${idUsuario}`, {
+        method: 'DELETE'
+      });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
-    
       this.items = [];
     } catch (error) {
       console.error("Error vaciando BD:", error);

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[80rem] mx-auto py-8">
+  <div class="max-w-[80rem] mx-auto py-8 px-4 sm:px-6 lg:px-8">
     
     <div class="flex items-center gap-4 mb-8">
       <div class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg">
@@ -7,7 +7,7 @@
       </div>
       <div>
         <h1 class="text-3xl font-black text-slate-800 tracking-tight">Mi Cuenta</h1>
-        <p class="text-slate-500 font-medium">Gestiona tu información y revisa tus compras</p>
+        <p class="text-slate-500 font-medium">Gestiona tu información y revisa tus pedidos</p>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
               {{ inicialesUsuario }}
             </div>
             <h2 class="text-xl font-black text-slate-800">{{ usuarioActivo.username }}</h2>
-            <p class="text-slate-500 mb-6">Cliente Web</p>
+            <p class="text-slate-500 mb-6">Cliente Frecuente</p>
             
             <div class="flex flex-col gap-3 text-left bg-slate-50 p-4 rounded-xl border border-slate-100">
               <div class="flex justify-between items-center">
@@ -32,11 +32,13 @@
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Estado</span>
-                <span class="font-bold text-emerald-500">Activo</span>
+                <span class="font-bold text-emerald-500 flex items-center gap-1">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Activo
+                </span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Compras</span>
-                <span class="font-bold text-slate-700">{{ comprasRealizadas.length }}</span>
+                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Pedidos</span>
+                <span class="font-bold text-medical-blue">{{ comprasRealizadas.length }}</span>
               </div>
             </div>
           </div>
@@ -60,40 +62,64 @@
           </div>
 
           <div class="p-0 md:p-4">
-            <div v-if="comprasRealizadas.length === 0" class="text-center py-12 text-slate-500">
-              Aún no has realizado ninguna compra.
+            <div v-if="comprasRealizadas.length === 0" class="text-center py-16 px-4">
+              <div class="w-20 h-20 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+              </div>
+              <h3 class="text-lg font-black text-slate-700 mb-2">Aún no has realizado compras</h3>
+              <p class="text-slate-500 mb-6">Explora nuestro catálogo y encuentra lo que necesitas.</p>
+              <router-link to="/productos" class="inline-flex bg-medical-blue text-white font-bold py-3 px-6 rounded-xl hover:bg-medical-dark transition-colors">
+                Ir al Catálogo
+              </router-link>
             </div>
 
             <div v-else class="overflow-x-auto">
-              <table class="w-full text-left min-w-[600px]">
+              <table class="w-full text-left min-w-[650px]">
                 <thead>
                   <tr class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     <th class="p-4 md:px-6 md:py-4">Detalle del Pedido</th>
-                    <th class="p-4 md:px-6 md:py-4">Fecha</th>
+                    <th class="p-4 md:px-6 md:py-4">Fecha y Envío</th>
                     <th class="p-4 md:px-6 md:py-4 text-right">Total</th>
                     <th class="p-4 md:px-6 md:py-4 text-center">Estado</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-50">
-                  <tr v-for="orden in comprasRealizadas" :key="orden.ticket" class="hover:bg-slate-50 transition-colors group cursor-pointer">
+                <tbody class="divide-y divide-slate-100">
+                  <tr v-for="orden in comprasRealizadas" :key="orden.nroPedido" class="hover:bg-slate-50 transition-colors">
+                    
                     <td class="p-4 md:px-6 md:py-5">
-                      <span class="font-bold text-slate-800 group-hover:text-medical-blue transition-colors">{{ orden.ticket }}</span>
-                      <p class="text-xs font-black text-medical-blue mt-1 uppercase">{{ orden.producto }}</p>
-                      <p class="text-xs text-slate-500 mt-1">Pago: {{ orden.metodoPago }}</p>
+                      <div class="flex flex-col gap-1">
+                        <span class="font-black text-medical-blue uppercase tracking-tight">{{ orden.nroPedido }}</span>
+                        
+                        <ul class="mt-2 space-y-1">
+                          <li v-for="item in orden.detalles" :key="item.idDetalle" class="text-xs text-slate-600 flex gap-2">
+                            <span class="font-bold text-slate-800">{{ item.cantidad }}x</span>
+                            <span class="truncate max-w-[200px]" :title="item.nombreProducto">{{ item.nombreProducto }}</span>
+                          </li>
+                        </ul>
+                      </div>
                     </td>
-                    <td class="p-4 md:px-6 md:py-5 text-slate-600 font-medium">
-                      {{ formatearFechaServidor(orden.fecha) }}
+
+                    <td class="p-4 md:px-6 md:py-5">
+                      <p class="text-sm text-slate-800 font-bold mb-1">{{ formatearFechaServidor(orden.fechaPedido) }}</p>
+                      <div class="flex flex-col gap-0.5 text-xs text-slate-500">
+                        <span>Envío: <strong class="text-slate-700">{{ orden.tipoEnvio }}</strong></span>
+                        <span>Pago: <strong class="text-slate-700">{{ orden.tipoPago.replace('_', ' ') }}</strong></span>
+                      </div>
                     </td>
+
                     <td class="p-4 md:px-6 md:py-5 text-right">
-                      <span class="font-black text-slate-900">S/. {{ Number(orden.total).toFixed(2) }}</span>
+                      <span class="font-black text-slate-900 text-lg block">S/. {{ Number(orden.total).toFixed(2) }}</span>
+                      <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Incluye IGV</span>
                     </td>
+
                     <td class="p-4 md:px-6 md:py-5 text-center">
                       <span 
-                        class="inline-block px-3 py-1 rounded-full text-xs font-black tracking-widest uppercase"
+                        class="inline-block px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase shadow-sm border"
                         :class="{
-                          'bg-emerald-100 text-emerald-600': orden.estado === 'COMPLETADA',
-                          'bg-amber-100 text-amber-600': orden.estado === 'PENDIENTE',
-                          'bg-red-100 text-red-500': orden.estado === 'ANULADA'
+                          'bg-emerald-50 text-emerald-600 border-emerald-200': orden.estado === 'ENTREGADO' || orden.estado === 'PAGADO',
+                          'bg-amber-50 text-amber-600 border-amber-200': orden.estado === 'PENDIENTE' || orden.estado === 'PROCESANDO',
+                          'bg-blue-50 text-medical-blue border-blue-200': orden.estado === 'ENVIADO',
+                          'bg-red-50 text-red-500 border-red-200': orden.estado === 'CANCELADO' || orden.estado === 'ANULADA'
                         }"
                       >
                         {{ orden.estado }}
@@ -131,18 +157,28 @@ const inicialesUsuario = computed(() => {
     : 'US';
 });
 
-// 🌟 Consultamos a Spring Boot cuando la pantalla carga
+// 🌟 Consultamos al Backend usando la API actualizada
 onMounted(async () => {
   if (authStore.estaLogueado && usuarioActivo.value.idUsuario) {
     comprasRealizadas.value = await apiClient.obtenerMisCompras(usuarioActivo.value.idUsuario);
   } else {
-    router.push('/login'); // Redirigimos si intenta entrar sin sesión
+    router.push('/login'); 
   }
 });
 
-// 🌟 Formateamos la fecha que llega desde MySQL (Timestamp)
+// 🌟 Formateamos la fecha que llega desde MySQL (Soporta Timestamp y Arrays ISO)
 const formatearFechaServidor = (fechaStr) => {
-  if (!fechaStr) return 'Fecha no disponible';
+  if (!fechaStr) return 'Pendiente';
+  
+  // Spring Boot a veces devuelve las fechas como arrays [año, mes, dia, hora, minuto]
+  if (Array.isArray(fechaStr)) {
+    const [year, month, day, hour = 0, minute = 0] = fechaStr;
+    const fechaObj = new Date(year, month - 1, day, hour, minute);
+    return fechaObj.toLocaleDateString('es-PE', {
+      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
   return new Date(fechaStr).toLocaleDateString('es-PE', {
     year: 'numeric', month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit'
