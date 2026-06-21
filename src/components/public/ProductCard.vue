@@ -24,7 +24,11 @@
       
       <div class="flex items-center justify-between mt-auto">
         <span class="text-2xl font-black text-slate-900">S/. {{ formatPrecio(producto.precio) }}</span>
-        <button class="bg-slate-100 text-medical-blue hover:bg-medical-blue hover:text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm">
+        <!-- SOLO SE AGREGA EL @click -->
+        <button 
+          @click="agregarProducto" 
+          class="bg-slate-100 text-medical-blue hover:bg-medical-blue hover:text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm"
+        >
           +
         </button>
       </div>
@@ -35,6 +39,7 @@
 
 <script>
 import { apiClient } from '@/services/apiClient';
+import { carritoStore } from '@/store/carrito'; // SOLO SE AGREGA ESTA IMPORTACIÓN
 
 export default {
   name: 'ProductCard',
@@ -55,6 +60,11 @@ export default {
     // Helper para asegurar que el precio siempre tenga 2 decimales
     formatPrecio(precio) {
       return Number(precio).toFixed(2);
+    },
+    // SOLO SE AGREGA ESTE MÉTODO NUEVO
+    agregarProducto() {
+      const idUsuario = 1; 
+      carritoStore.agregarBD(idUsuario, this.producto, 1);
     }
   }
 }
