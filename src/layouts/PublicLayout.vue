@@ -123,7 +123,14 @@
           <ul class="space-y-3">
             <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Términos y Condiciones</a></li>
             <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Políticas de Privacidad</a></li>
-            <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Libro de Reclamaciones</a></li>
+            <li>
+  <router-link
+    to="/libro-reclamaciones"
+    class="text-blue-200 hover:text-white hover:underline transition-all text-sm"
+  >
+    Libro de Reclamaciones
+  </router-link>
+</li>
           </ul>
         </div>
         <div>
