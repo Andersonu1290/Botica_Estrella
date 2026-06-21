@@ -155,6 +155,8 @@
       </div>
     </footer>
 
+    <ChatbotWidget />
+
   </div>
 </template>
 
@@ -165,6 +167,7 @@ import { filtrosStore } from '@/store/filtros';
 import { carritoStore } from '@/store/carrito';
 import { authStore } from '@/store/auth';
 import { apiClient } from '@/services/apiClient';
+import ChatbotWidget from '@/components/public/ChatbotWidget.vue';
 
 const router = useRouter();
 
