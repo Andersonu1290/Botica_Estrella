@@ -15,6 +15,7 @@ import CheckoutView from '../views/public/CheckoutView.vue'
 import ConfirmacionView from '../views/public/ConfirmacionView.vue'
 import LoginPublicoView from '@/views/public/LoginPublicoView.vue'
 import LibroReclamacionesView from '../views/public/LibroReclamacionesView.vue' 
+import SeguimientoView from '../views/public/SeguimientoView.vue'
 
 // Vistas del Admin
 import Login from '../views/admin/Login.vue'
@@ -46,7 +47,8 @@ const router = createRouter({
         { path: 'checkout', name: 'checkout', component: CheckoutView },
         { path: 'login', name: 'loginPublico', component: LoginPublicoView },
         { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView },
-        { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView }
+        { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView },
+        { path: 'seguimiento', name: 'seguimiento', component: SeguimientoView }
       ]
     },
 

@@ -1,121 +1,163 @@
 <template>
-  <div class="max-w-3xl mx-auto py-16 px-4 w-full">
+  <div class="max-w-4xl mx-auto py-12 px-4 w-full">
     
-    <div class="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8 md:p-12 text-center relative overflow-hidden">
-      
-      <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-emerald-50 to-transparent"></div>
-
-      <div class="relative z-10 w-24 h-24 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner animate-bounce">
-        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+    <div class="text-center mb-10">
+      <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner animate-bounce">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
       </div>
+      <h1 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">¡Pago Procesado con Éxito!</h1>
+      <p class="text-slate-500 text-lg">Tu pedido ya entró a nuestra cola de logística.</p>
+    </div>
 
-      <h1 class="text-3xl md:text-4xl font-black text-slate-800 mb-4">¡Pedido Confirmado!</h1>
-      <p class="text-slate-500 mb-8 leading-relaxed">
-        Gracias por confiar en <strong>Botica Estrella</strong>. Tu compra ha sido procesada con éxito y nuestro equipo de logística ya está preparando tu pedido.
-      </p>
+    <div class="bg-white max-w-2xl mx-auto shadow-2xl overflow-hidden border border-slate-200 relative">
+      
+      <div class="absolute top-0 left-0 w-full h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDAgNSwxMCAxMCwwIiBmaWxsPSIjZjhmYWZjIi8+PC9zdmc+')]"></div>
 
-      <div class="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200 mb-8 text-left shadow-inner">
-        <h3 class="text-lg font-black text-slate-800 border-b border-slate-200 pb-4 mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Resumen de tu Orden
-        </h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-4">
-          <div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Número de Pedido</p>
-            <span class="text-lg font-mono font-black text-medical-blue tracking-tight select-all">
-              {{ ticketGenerado || 'PROCESANDO...' }}
-            </span>
-          </div>
-          <div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Pagado</p>
-            <span class="text-lg font-black text-slate-800">
-              S/. {{ pedidoRelacionado ? Number(pedidoRelacionado.total).toFixed(2) : '...' }}
-            </span>
-          </div>
-          <div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Comprobante Solicitado</p>
-            <span class="text-sm font-bold text-slate-700 uppercase">
-              {{ tipoComprobante }}
-            </span>
-          </div>
-          <div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Método de Pago</p>
-            <span class="text-sm font-bold text-slate-700 uppercase flex items-center gap-2">
-              <span v-if="pedidoRelacionado && pedidoRelacionado.tipoPago.includes('TARJETA')" class="w-8 h-5 bg-slate-800 rounded-sm inline-block"></span>
-              {{ pedidoRelacionado ? pedidoRelacionado.tipoPago.replace('_', ' ') : '...' }}
-            </span>
-          </div>
-          <div class="md:col-span-2 bg-white p-4 rounded-xl border border-slate-100 mt-2">
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Destino del Envío</p>
-            <span class="text-sm font-bold text-slate-700">
-              {{ pedidoRelacionado ? `${pedidoRelacionado.direccionEnvio}, ${pedidoRelacionado.ciudad}` : 'Cargando dirección...' }}
-            </span>
-          </div>
+      <div class="text-center p-8 pt-12 border-b-2 border-dashed border-slate-300 bg-slate-50">
+        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-widest">Botica Estrella S.A.C.</h2>
+        <p class="text-sm text-slate-500 font-mono mt-2">RUC: 20546987123</p>
+        <p class="text-sm text-slate-500 font-mono">Av. Garcilaso de la Vega 1348, Lima</p>
+
+        <div class="mt-8 border-4 border-slate-800 p-4 md:p-6 inline-block bg-white shadow-sm">
+          <p class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-widest">COMPROBANTE DE PEDIDO WEB</p>
+          <p class="text-2xl font-mono font-bold text-medical-blue mt-2">{{ ticketGenerado || 'CARGANDO...' }}</p>
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-4">
-        <router-link to="/" class="flex-1 bg-slate-900 text-white py-4 rounded-xl font-black text-lg hover:bg-medical-blue transition-all active:scale-95 shadow-lg">
-          Volver al Inicio
-        </router-link>
-        <router-link to="/perfil" class="flex-1 text-slate-600 border-2 border-slate-200 font-bold py-4 rounded-xl hover:text-medical-blue hover:border-medical-blue hover:bg-slate-50 transition-all">
-          Ver historial de pedidos
-        </router-link>
+      <div class="p-16 text-center" v-if="cargando">
+        <span class="animate-spin inline-block w-10 h-10 border-4 border-medical-blue border-t-transparent rounded-full mb-4"></span>
+        <p class="text-slate-500 font-mono text-sm uppercase tracking-widest">Recuperando detalles de la orden...</p>
       </div>
+
+      <div class="p-6 md:p-10" v-else-if="pedido">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-mono mb-8 bg-slate-50 p-6 rounded-xl border border-slate-100">
+          <div>
+            <span class="font-bold text-slate-400">FECHA DE EMISIÓN:</span><br> 
+            <span class="text-slate-800 font-bold">{{ formatearFecha(pedido.fechaPedido) }}</span>
+          </div>
+          <div>
+            <span class="font-bold text-slate-400">MÉTODO DE PAGO:</span><br> 
+            <span class="text-slate-800 font-bold uppercase">{{ pedido.tipoPago.replace('_', ' ') }}</span>
+          </div>
+          <div class="md:col-span-2">
+            <span class="font-bold text-slate-400">CLIENTE RECEPTOR:</span><br> 
+            <span class="text-slate-800 font-bold uppercase">{{ pedido.nombreCliente }} {{ pedido.apellidoCliente || '' }}</span>
+          </div>
+          <div class="md:col-span-2">
+            <span class="font-bold text-slate-400">DIRECCIÓN DE DESTINO:</span><br> 
+            <span class="text-slate-800 font-bold uppercase">{{ pedido.direccionEnvio }} {{ pedido.numeroCalle || '' }}, {{ pedido.ciudad }}</span>
+          </div>
+        </div>
+
+        <table class="w-full text-sm font-mono mb-8">
+          <thead>
+            <tr class="border-y-2 border-dashed border-slate-300 text-slate-500">
+              <th class="py-3 text-left w-12">CANT</th>
+              <th class="py-3 text-left">DESCRIPCIÓN</th>
+              <th class="py-3 text-right w-28">IMPORTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in pedido.detalles" :key="item.idDetalle" class="border-b border-slate-100">
+              <td class="py-4 align-top font-bold">{{ item.cantidad }}</td>
+              <td class="py-4 pr-4 uppercase text-slate-700">{{ item.nombreProducto }}</td>
+              <td class="py-4 text-right align-top font-bold">S/ {{ formatPrecio(item.subtotal) }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="w-full md:w-2/3 ml-auto text-sm font-mono space-y-3 bg-slate-50 p-6 rounded-xl border border-slate-100">
+          <div class="flex justify-between text-slate-500">
+            <span>SUBTOTAL:</span>
+            <span>S/ {{ formatPrecio(pedido.subtotal / 1.18) }}</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span>IGV (18%):</span>
+            <span>S/ {{ formatPrecio(pedido.subtotal - (pedido.subtotal / 1.18)) }}</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span>FLETE ({{ pedido.tipoEnvio }}):</span>
+            <span>S/ {{ formatPrecio(pedido.costoEnvio) }}</span>
+          </div>
+          <div class="flex justify-between text-xl font-black text-slate-800 border-t-2 border-dashed border-slate-300 pt-4 mt-2">
+            <span>TOTAL PAGADO:</span>
+            <span>S/ {{ formatPrecio(pedido.total) }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-6 bg-slate-50 text-center border-t border-slate-200">
+        <p class="text-[10px] text-slate-400 font-mono uppercase tracking-widest leading-relaxed">
+          Documento interno de control e-commerce.<br>
+          Se ha enviado el comprobante oficial (Boleta/Factura) a su correo electrónico.<br>
+          Gracias por su compra.
+        </p>
+      </div>
+
     </div>
 
-    <p class="text-center text-slate-400 text-sm mt-8">
-      Te hemos enviado el detalle de tu compra y tu comprobante a tu correo electrónico.
-    </p>
+    <div class="max-w-2xl mx-auto mt-10 flex flex-col sm:flex-row gap-4">
+      <router-link to="/perfil" class="flex-1 bg-medical-blue text-white py-4 rounded-xl font-black text-lg hover:bg-medical-dark transition-all text-center shadow-lg active:scale-95">
+        Rastrear mi pedido
+      </router-link>
+      <router-link to="/" class="flex-1 bg-white text-slate-600 border-2 border-slate-200 py-4 rounded-xl font-black text-lg hover:border-medical-blue hover:text-medical-blue transition-all text-center active:scale-95">
+        Volver a la Tienda
+      </router-link>
+    </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; 
 import { authStore } from '@/store/auth';
 import { apiClient } from '@/services/apiClient';
 
 const route = useRoute();
 const ticketGenerado = ref('');
-const pedidoRelacionado = ref(null);
+const pedido = ref(null);
+const cargando = ref(true);
 
-// Computamos si el cliente pidió Boleta o Factura (Lo guardamos en observaciones durante el checkout)
-const tipoComprobante = computed(() => {
-  if (pedidoRelacionado.value && pedidoRelacionado.value.observaciones) {
-    if (pedidoRelacionado.value.observaciones.includes('FACTURA')) return 'Factura Electrónica';
-    if (pedidoRelacionado.value.observaciones.includes('BOLETA')) return 'Boleta Electrónica';
+const formatPrecio = (precio) => Number(precio).toFixed(2);
+
+const formatearFecha = (fechaStr) => {
+  if (!fechaStr) return '-';
+  if (Array.isArray(fechaStr)) {
+    const [year, month, day, hour = 0, minute = 0] = fechaStr;
+    const fechaObj = new Date(year, month - 1, day, hour, minute);
+    return fechaObj.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
-  return 'Comprobante Electrónico';
-});
+  return new Date(fechaStr).toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+};
 
 onMounted(async () => {
-  // 🌟 DOBLE MAGIA PARA EL SCROLL: 
-  // Aseguramos que el DOM se haya renderizado y obligamos al navegador a subir instantáneamente
-  await nextTick();
-  window.scrollTo({ top: 0, behavior: 'instant' });
-
-  // Fallback: A veces Vue Router restaura el scroll tarde, este timeout le gana a la animación
+  // 🌟 EL FIX DEL SCROLL PARA EVITAR EL ESPACIO BLANCO ABAJO
+  window.scrollTo(0, 0);
   setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   }, 50);
 
+  // 🌟 OBTENER LOS DATOS REALES DE LA BASE DE DATOS
   if (route.query.ticket) {
     ticketGenerado.value = route.query.ticket;
     
-    // 🌟 HACEMOS LA VISTA REALISTA:
-    // Traemos el pedido directo desde Spring Boot usando el cliente logueado
     if (authStore.estaLogueado) {
       try {
         const compras = await apiClient.obtenerMisCompras(authStore.usuarioActual.idUsuario);
-        // Filtramos para agarrar el pedido exacto que acaba de pagar
-        pedidoRelacionado.value = compras.find(c => c.nroPedido === ticketGenerado.value);
+        // Buscamos el pedido exacto que acaba de generar por su NroPedido (Ej: PED-2026-00001)
+        pedido.value = compras.find(c => c.nroPedido === ticketGenerado.value);
       } catch (error) {
-        console.error("No se pudo obtener el detalle del pedido para la confirmación", error);
+        console.error("Error cargando el comprobante:", error);
+      } finally {
+        cargando.value = false;
       }
     }
+  } else {
+    cargando.value = false;
   }
 });
 </script>
