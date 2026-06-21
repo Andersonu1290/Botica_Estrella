@@ -20,7 +20,22 @@ onMounted(() => {
   import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js')
     .then(({ createChat }) => {
       createChat({
-        webhookUrl: 'https://n8n-production-5938.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat'
+        webhookUrl: 'https://n8n-production-5938.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat',
+
+        initialMessages: [
+          '¡Hola! 👋',
+          'Soy el asistente virtual de Botica Estrella.'
+        ],
+
+        i18n: {
+          en: {
+            title: 'Botica Estrella',
+            subtitle: 'Atención farmacéutica',
+            footer: '',
+            getStarted: 'Comenzar',
+            inputPlaceholder: 'Escribe tu consulta...'
+          }
+        }
       });
       window.n8nChatbotLoaded = true;
     })
@@ -50,7 +65,7 @@ onUnmounted(() => {
 .chat-window {
   border-radius: 24px !important;
   overflow: hidden !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,.18) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .18) !important;
 }
 
 /* Cabecera */
@@ -69,7 +84,7 @@ onUnmounted(() => {
 
 /* Subtítulo */
 .chat-header p {
-  color: rgba(255,255,255,.9) !important;
+  color: rgba(255, 255, 255, .9) !important;
 }
 
 /* Fondo del chat */
@@ -107,7 +122,7 @@ onUnmounted(() => {
 .chat-window-toggle {
   background: linear-gradient(135deg, #0284c7, #06b6d4) !important;
   border-radius: 50% !important;
-  box-shadow: 0 10px 30px rgba(2,132,199,.4);
+  box-shadow: 0 10px 30px rgba(2, 132, 199, .4);
 }
 
 /* Contenedor de todos los mensajes */
@@ -123,7 +138,7 @@ onUnmounted(() => {
   background: white !important;
   border-radius: 18px !important;
   padding: 12px 16px !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
 }
 
 /* Usuario a la derecha */
