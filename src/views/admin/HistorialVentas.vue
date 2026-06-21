@@ -27,6 +27,9 @@
             </button>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TAB 1: PEDIDOS WEB                         -->
+        <!-- ========================================== -->
         <div v-if="tabActual === 'WEB'">
             <div class="table-panel">
                 <table class="tech-table">
@@ -51,18 +54,15 @@
                             <td>
                                 <span style="font-weight: bold; color: #e2e8f0;">{{ formatearFecha(pedido.fechaPedido) }}</span>
                             </td>
-                            
                             <td>
                                 <span style="color: var(--brand-blue); font-weight: 900; display: block;">{{ pedido.nroPedido }}</span>
                                 <span style="font-size: 0.75em; color: #94a3b8; text-transform: uppercase;">MÉTODO: {{ pedido.tipoPago.replace('_', ' ') }}</span>
                             </td>
-
                             <td>
                                 <span style="font-weight: bold; color: #e2e8f0;">{{ pedido.nombreCliente }}</span><br>
                                 <span style="font-size: 0.8em; color: #94a3b8;">📞 {{ pedido.telefonoCliente }} | ✉️ {{ pedido.emailCliente }}</span><br>
-                                <span style="font-size: 0.8em; color: #94a3b8;">📍 {{ pedido.direccionEnvio }} {{ pedido.numeroCalle }}, {{ pedido.ciudad }}</span>
+                                <span style="font-size: 0.8em; color: #94a3b8;">📍 {{ pedido.direccionEnvio }} {{ pedido.numeroCalle || '' }}, {{ pedido.ciudad }}</span>
                             </td>
-
                             <td>
                                 <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85em; color: #cbd5e1;">
                                     <li v-for="item in pedido.detalles" :key="item.idDetalle" style="margin-bottom: 3px;">
@@ -70,29 +70,28 @@
                                     </li>
                                 </ul>
                                 <span style="font-size: 0.7em; color: #3b82f6; letter-spacing: 1px; text-transform: uppercase; margin-top: 5px; display: block;">🚚 ENVÍO: {{ pedido.tipoEnvio }}</span>
+                                <!-- Muestra el tracking si ya lo enviaron -->
+                                <span v-if="pedido.numeroSeguimiento" style="font-size: 0.7em; color: #10b981; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; display: block;">📍 TRACK: {{ pedido.numeroSeguimiento }}</span>
                             </td>
-
                             <td>
                                 <span style="font-weight: 900; color: #fff; font-size: 1.1em;">S/. {{ Number(pedido.total).toFixed(2) }}</span>
                             </td>
-
                             <td class="text-center">
                                 <span :style="obtenerEstiloEstado(pedido.estado)">
                                     {{ pedido.estado }}
                                 </span>
                             </td>
-
                             <td class="text-center">
                                 <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
-                                    <button v-if="pedido.estado === 'PENDIENTE'" @click="cambiarEstado(pedido, 'ENVIADO')" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #3b82f6; color: #3b82f6; width: 120px;">
+                                    <button v-if="pedido.estado === 'PENDIENTE'" @click="abrirModal(pedido, 'ENVIAR')" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #3b82f6; color: #3b82f6; width: 120px;">
                                         Marcar Enviado
                                     </button>
                                     
-                                    <button v-if="pedido.estado === 'ENVIADO'" @click="cambiarEstado(pedido, 'ENTREGADO')" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #10b981; color: #10b981; width: 120px;">
+                                    <button v-if="pedido.estado === 'ENVIADO'" @click="abrirModal(pedido, 'ENTREGAR')" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #10b981; color: #10b981; width: 120px;">
                                         Entregado
                                     </button>
 
-                                    <button v-if="pedido.estado === 'PENDIENTE'" @click="revertirVentaWeb(pedido)" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #ef4444; color: #ef4444; width: 120px;">
+                                    <button v-if="pedido.estado === 'PENDIENTE'" @click="abrirModal(pedido, 'REVERTIR')" class="btn-tech" style="padding: 6px 12px; font-size: 0.75em; border-color: #ef4444; color: #ef4444; width: 120px;">
                                         Revertir Venta
                                     </button>
 
@@ -107,6 +106,9 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TAB 2: VENTAS POS                          -->
+        <!-- ========================================== -->
         <div v-show="tabActual === 'POS'">
             <div class="search-box-container">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" width="20" height="20">
@@ -141,6 +143,46 @@
         </div>
 
     </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL INTERACTIVO DE GESTIÓN LOGÍSTICA     -->
+    <!-- ========================================== -->
+    <div v-if="modal.visible" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        
+        <div class="p-6 border-b border-slate-100 bg-slate-50">
+          <h3 class="text-xl font-black text-slate-800">{{ modal.titulo }}</h3>
+          <p class="text-sm text-slate-500 mt-1">Pedido: <strong class="text-medical-blue">{{ modal.pedido.nroPedido }}</strong></p>
+        </div>
+        
+        <div class="p-6">
+          <!-- Campo solo para el estado ENVIAR -->
+          <div v-if="modal.tipo === 'ENVIAR'">
+            <label class="block text-xs font-black text-slate-400 uppercase mb-2">Empresa y Nro. de Seguimiento</label>
+            <input v-model="modal.tracking" type="text" placeholder="Ej: Olva Courier - TRK-98765" class="w-full bg-white border-2 border-slate-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-medical-blue outline-none transition-all font-medium text-slate-800">
+            <p class="text-xs text-slate-400 mt-2">El cliente verá este código en su panel de seguimiento.</p>
+          </div>
+          
+          <div v-if="modal.tipo === 'ENTREGAR'">
+            <p class="text-slate-700 font-medium text-sm">Estás a punto de confirmar que el cliente recibió su paquete satisfactoriamente. Esta acción finalizará el ciclo logístico.</p>
+          </div>
+          
+          <div v-if="modal.tipo === 'REVERTIR'">
+            <p class="text-red-600 font-medium text-sm">Estás a punto de anular este pedido web. Los productos regresarán automáticamente al almacén y el estado cambiará a CANCELADO de forma irreversible.</p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+          <button @click="cerrarModal" :disabled="procesando" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">Cancelar</button>
+          <button @click="ejecutarAccion" :disabled="procesando" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2" :class="modal.colorBtn">
+            <span v-if="procesando" class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+            {{ modal.textoBtn }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -152,12 +194,22 @@ export default {
   data() {
     return {
       tabActual: 'WEB', 
-      pedidosWeb: []
+      pedidosWeb: [],
+      procesando: false,
+      // Objeto que controla la ventana Modal
+      modal: {
+        visible: false,
+        tipo: '',
+        pedido: null,
+        titulo: '',
+        tracking: '',
+        colorBtn: '',
+        textoBtn: ''
+      }
     };
   },
   mounted() {
     window.VITE_API_URL = import.meta.env.VITE_API_URL;
-
     this.cargarScript('/admin/js/api.js')
       .then(() => this.cargarScript('/admin/js/utils.js'))
       .then(() => this.cargarScript('/admin/js/historialventas.js'))
@@ -166,7 +218,7 @@ export default {
           window.document.dispatchEvent(new Event("DOMContentLoaded", { bubbles: true, cancelable: true }));
         }, 50);
       })
-      .catch(err => console.error("Error al inyectar infraestructura del historial de ventas:", err));
+      .catch(err => console.error("Error al inyectar infraestructura:", err));
 
     this.cargarPedidosWeb();
   },
@@ -179,27 +231,58 @@ export default {
       }
     },
 
-    async cambiarEstado(pedido, nuevoEstado) {
-      if (confirm(`¿Estás seguro de marcar el pedido ${pedido.nroPedido} como ${nuevoEstado}?`)) {
-        try {
-          await apiClient.actualizarEstadoPedidoWeb(pedido.idVentaCliente, nuevoEstado);
-          await this.cargarPedidosWeb(); 
-        } catch (error) {
-          alert("Hubo un error al actualizar el estado.");
-        }
+    // 🌟 ABRIR EL MODAL SEGÚN LA ACCIÓN
+    abrirModal(pedido, tipoAccion) {
+      this.modal.pedido = pedido;
+      this.modal.tipo = tipoAccion;
+      this.modal.tracking = ''; 
+      this.modal.visible = true;
+
+      if (tipoAccion === 'ENVIAR') {
+        this.modal.titulo = 'Registrar Despacho';
+        this.modal.colorBtn = 'bg-blue-500 hover:bg-blue-600';
+        this.modal.textoBtn = 'Confirmar Envío';
+      } else if (tipoAccion === 'ENTREGAR') {
+        this.modal.titulo = 'Confirmar Entrega';
+        this.modal.colorBtn = 'bg-emerald-500 hover:bg-emerald-600';
+        this.modal.textoBtn = 'Finalizar Pedido';
+      } else if (tipoAccion === 'REVERTIR') {
+        this.modal.titulo = 'Anular Pedido Web';
+        this.modal.colorBtn = 'bg-red-500 hover:bg-red-600';
+        this.modal.textoBtn = 'Revertir y Devolver Stock';
       }
     },
 
-    // 🔥 NUEVA FUNCIÓN: Lógica para Revertir Venta Web
-    async revertirVentaWeb(pedido) {
-      if (confirm(`ATENCIÓN: ¿Estás seguro de REVERTIR el pedido ${pedido.nroPedido}? \n\nEsta acción es irreversible y los productos regresarán al stock del almacén automáticamente.`)) {
-        try {
-          await apiClient.cancelarPedidoWeb(pedido.idVentaCliente);
-          alert(`El pedido ${pedido.nroPedido} ha sido revertido exitosamente.`);
-          await this.cargarPedidosWeb(); // Refresca la tabla
-        } catch (error) {
-          alert(error.message || "Hubo un error al revertir la venta web.");
+    cerrarModal() {
+      this.modal.visible = false;
+    },
+
+    // 🌟 EJECUTAR LA ACCIÓN AL DAR CLIC EN GUARDAR EN EL MODAL
+    async ejecutarAccion() {
+      this.procesando = true;
+      try {
+        if (this.modal.tipo === 'ENVIAR') {
+          // Validar que haya escrito un código (opcional, pero buena práctica)
+          if (!this.modal.tracking) {
+            alert("Por favor ingrese la empresa y número de seguimiento.");
+            this.procesando = false;
+            return;
+          }
+          await apiClient.actualizarEstadoPedidoWeb(this.modal.pedido.idVentaCliente, 'ENVIADO', this.modal.tracking);
+        } 
+        else if (this.modal.tipo === 'ENTREGAR') {
+          await apiClient.actualizarEstadoPedidoWeb(this.modal.pedido.idVentaCliente, 'ENTREGADO');
+        } 
+        else if (this.modal.tipo === 'REVERTIR') {
+          await apiClient.cancelarPedidoWeb(this.modal.pedido.idVentaCliente);
         }
+        
+        await this.cargarPedidosWeb();
+        this.cerrarModal();
+      } catch (error) {
+        alert(error.message || "Hubo un error al procesar la acción.");
+      } finally {
+        this.procesando = false;
       }
     },
 
@@ -226,7 +309,6 @@ export default {
       return new Promise((resolve, reject) => {
         const scriptExistente = document.querySelector(`script[src="${ruta}"]`);
         if (scriptExistente) { resolve(); return; }
-
         const script = document.createElement('script');
         script.src = ruta;
         script.className = 'script-historial-modulo';
@@ -240,13 +322,8 @@ export default {
   unmounted() {
     const scriptsCargados = document.querySelectorAll('.script-historial-modulo');
     scriptsCargados.forEach(script => {
-      if (script.src.includes('historialventas.js')) {
-        script.remove();
-      }
+      if (script.src.includes('historialventas.js')) script.remove();
     });
   }
 }
 </script>
-
-<style scoped>
-</style>

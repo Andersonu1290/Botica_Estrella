@@ -98,11 +98,17 @@ export const apiClient = {
     }
   },
 
-  async actualizarEstadoPedidoWeb(idVentaCliente, nuevoEstado) {
+  // Cambia el estado y opcionalmente envía el número de seguimiento
+  async actualizarEstadoPedidoWeb(idVentaCliente, nuevoEstado, numeroSeguimiento = '') {
     try {
-      const respuesta = await fetch(`${BASE_URL}/pedidos/${idVentaCliente}/estado?nuevoEstado=${nuevoEstado}`, {
-        method: 'PUT'
-      });
+      let url = `${BASE_URL}/pedidos/${idVentaCliente}/estado?nuevoEstado=${nuevoEstado}`;
+      
+      // Si el administrador escribió un código de seguimiento, lo mandamos en la URL
+      if (numeroSeguimiento) {
+        url += `&numeroSeguimiento=${encodeURIComponent(numeroSeguimiento)}`;
+      }
+
+      const respuesta = await fetch(url, { method: 'PUT' });
       if (!respuesta.ok) throw new Error('Error al actualizar estado');
       return await respuesta.json();
     } catch (error) {
