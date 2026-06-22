@@ -16,6 +16,7 @@ import ConfirmacionView from '../views/public/ConfirmacionView.vue'
 import LoginPublicoView from '@/views/public/LoginPublicoView.vue'
 import LibroReclamacionesView from '../views/public/LibroReclamacionesView.vue' 
 import SeguimientoView from '../views/public/SeguimientoView.vue'
+import TerminosCondicionesView from '../views/public/TerminosCondicionesView.vue'
 
 // Vistas del Admin
 import Login from '../views/admin/Login.vue'
@@ -48,7 +49,8 @@ const router = createRouter({
         { path: 'login', name: 'loginPublico', component: LoginPublicoView },
         { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView },
         { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView },
-        { path: 'seguimiento', name: 'seguimiento', component: SeguimientoView }
+        { path: 'seguimiento', name: 'seguimiento', component: SeguimientoView },
+        { path: 'terminos-condiciones', name: 'terminosCondiciones', component: TerminosCondicionesView }
       ]
     },
 
