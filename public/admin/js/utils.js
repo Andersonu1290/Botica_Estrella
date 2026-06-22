@@ -27,7 +27,7 @@ function inicializarBuscador(inputId, tableId) {
  * @param {number} cantidad - Monto numérico
  */
 function formatMoneda(cantidad) {
-    if (isNaN(cantidad) || cantidad === null) return "S/ 0.00";
+    if (Number.isNaN(cantidad) || cantidad === null) return "S/ 0.00";
     return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(cantidad);
 }
 
@@ -110,6 +110,6 @@ async function cerrarSesion() {
         // El bloque finally garantiza que la limpieza ocurra siempre, incluso sin red
         sessionStorage.removeItem('usuarioActivo');
         sessionStorage.removeItem('jwt_token');
-        window.location.href = 'login';
+        globalThis.location.href = '/admin/login';
     }
 }

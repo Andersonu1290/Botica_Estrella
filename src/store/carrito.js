@@ -1,6 +1,18 @@
 import { reactive } from 'vue';
+import { esJwtExpirado, obtenerTokenCliente } from '@/utils/auth';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || '/api') + '/v1';
+
+const buildHeaders = () => {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = obtenerTokenCliente();
+
+  if (token && !esJwtExpirado(token)) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+};
 
 export const carritoStore = reactive({
   items: [],
@@ -22,7 +34,9 @@ export const carritoStore = reactive({
     if (!idUsuario) return;
     this.cargando = true;
     try {
-      const res = await fetch(`${BASE_URL}/carrito/${idUsuario}`);
+      const res = await fetch(`${BASE_URL}/carrito/${idUsuario}`, {
+        headers: buildHeaders()
+      });
       if (res.ok) {
         this.items = await res.json();
       }
@@ -34,7 +48,7 @@ export const carritoStore = reactive({
   },
 
   // 2. Agregar o actualizar cantidad en MySQL
-  async agregarBD(idUsuario, producto, cantidadAñadida) {
+  async agregarBD(idUsuario, producto, cantidadAnadida) {
     if (!idUsuario) {
       alert("Debes iniciar sesión para agregar productos al carrito.");
       return;
@@ -48,7 +62,7 @@ export const carritoStore = reactive({
     const cantidadActualEnCarrito = itemExistente ? itemExistente.cantidad : 0;
 
     // Solo bloqueamos si estamos sumando (+1). Si cantidadAñadida es negativa (-1), dejamos pasar para que pueda restar
-    if (cantidadAñadida > 0 && (cantidadActualEnCarrito + cantidadAñadida > stockDisponible)) {
+    if (cantidadAnadida > 0 && (cantidadActualEnCarrito + cantidadAnadida > stockDisponible)) {
       alert(`Stock insuficiente. Solo hay ${stockDisponible} unidades disponibles de ${producto.nombre}.`);
       return; // 🛑 Bloqueamos la petición a Spring Boot / MySQL
     }
@@ -56,11 +70,11 @@ export const carritoStore = reactive({
     try {
       await fetch(`${BASE_URL}/carrito/agregar`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: buildHeaders(),
         body: JSON.stringify({
           idUsuario: idUsuario,
           idProducto: producto.idProducto,
-          cantidad: cantidadAñadida
+          cantidad: cantidadAnadida
         })
       });
       // Recargamos el carrito para sincronizar
@@ -73,7 +87,10 @@ export const carritoStore = reactive({
   // 3. Eliminar una fila (item) de MySQL
   async eliminarProductoBD(idUsuario, idItem) {
     try {
-      await fetch(`${BASE_URL}/carrito/item/${idItem}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/carrito/item/${idItem}`, {
+        method: 'DELETE',
+        headers: buildHeaders()
+      });
       await this.cargarCarritoBD(idUsuario);
     } catch (error) {
       console.error("Error eliminando de BD:", error);
@@ -84,10 +101,12 @@ export const carritoStore = reactive({
   async vaciarBD(idUsuario) {
     try {
       const res = await fetch(`${BASE_URL}/carrito/vaciar/${idUsuario}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: buildHeaders()
       });
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
+        console.error(`Error vaciando carrito: HTTP ${res.status}`);
+        return;
       }
       this.items = [];
     } catch (error) {

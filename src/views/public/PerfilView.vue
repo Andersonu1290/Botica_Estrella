@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-[85rem] mx-auto py-8 px-4 sm:px-6 lg:px-8">
-    
+  <div class="max-w-340 mx-auto py-8 px-4 sm:px-6 lg:px-8">
+
     <div class="flex items-center gap-4 mb-8">
       <div class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -15,8 +15,8 @@
       
       <!-- Panel Izquierdo -->
       <div class="lg:col-span-3 space-y-6">
-        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-8 text-center relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-br from-medical-blue to-blue-400"></div>
+        <div class="bg-white rounded-4xl shadow-sm border border-slate-200 p-8 text-center relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-24 bg-linear-to-br from-medical-blue to-blue-400"></div>
           <div class="relative z-10">
             <div class="w-24 h-24 bg-white rounded-full mx-auto border-4 border-white shadow-md flex items-center justify-center text-4xl font-black text-medical-blue mb-4">
               {{ inicialesUsuario }}
@@ -45,8 +45,8 @@
 
       <!-- Panel Derecho (Tabla) -->
       <div class="lg:col-span-9">
-        <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
-          
+        <div class="bg-white rounded-4xl shadow-sm border border-slate-200 overflow-hidden">
+
           <div class="p-6 md:p-8 border-b border-slate-100 flex justify-between items-center">
             <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
               <svg class="w-5 h-5 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -68,7 +68,7 @@
 
             <!-- Tabla Optimizada -->
             <div v-else class="overflow-x-auto">
-              <table class="w-full text-left min-w-[900px]">
+              <table class="w-full text-left min-w-225">
                 <thead>
                   <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-slate-50">
                     <th class="p-4 md:px-6 md:py-4">Pedido / Detalles</th>
@@ -87,7 +87,7 @@
                         <ul class="mt-1 space-y-1">
                           <li v-for="item in orden.detalles" :key="item.idDetalle" class="text-xs text-slate-600 flex gap-2">
                             <span class="font-bold text-slate-800">{{ item.cantidad }}x</span>
-                            <span class="truncate max-w-[200px]" :title="item.nombreProducto">{{ item.nombreProducto }}</span>
+                            <span class="truncate max-w-50" :title="item.nombreProducto">{{ item.nombreProducto }}</span>
                           </li>
                         </ul>
                       </div>
@@ -175,10 +175,16 @@ const inicialesUsuario = computed(() => {
 
 onMounted(async () => {
   if (authStore.estaLogueado && usuarioActivo.value.idUsuario) {
-    comprasRealizadas.value = await apiClient.obtenerMisCompras(usuarioActivo.value.idUsuario);
-    comprasRealizadas.value.sort((a, b) => new Date(b.fechaPedido) - new Date(a.fechaPedido));
+    try {
+      comprasRealizadas.value = await apiClient.obtenerMisCompras(usuarioActivo.value.idUsuario);
+      comprasRealizadas.value.sort((a, b) => new Date(b.fechaPedido) - new Date(a.fechaPedido));
+    } catch (error) {
+      console.error('Error cargando compras del perfil:', error);
+      authStore.cerrarSesion();
+      router.push('/login?redirect=/perfil');
+    }
   } else {
-    router.push('/login'); 
+    router.push('/login?redirect=/perfil');
   }
 });
 

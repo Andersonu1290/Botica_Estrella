@@ -2,13 +2,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     // FASE 2: Protección de Ruta básica (Verificar autenticación)
     const usuarioSesion = sessionStorage.getItem('usuarioActivo');
     if (!usuarioSesion) {
-        window.location.href = 'login';
+        window.location.href = '/admin/login';
         return;
     }
 
     const usuarioActivo = JSON.parse(usuarioSesion);
     // Verificar si cuenta con privilegios administrativos de Jefe de Almacén
-    const esAdmin = usuarioActivo.rol === "JEFE_ALMACEN";
+    const esAdmin = ['ADMIN', 'ALMACEN', 'JEFE_ALMACEN'].includes(String(usuarioActivo.rol || '').toUpperCase());
 
     const frmUsuario = document.getElementById("frmUsuario");
     const panelAccesoDenegado = document.getElementById("panelAccesoDenegado");
@@ -96,8 +96,10 @@ async function cargarListaUsuarios() {
         // Iteración asíncrona sobre el arreglo JSON devuelto por Spring Boot
         usuarios.forEach(u => {
             // FASE 4: Asignar dinámicamente la clase CSS de la insignia según el nivel de seguridad
-            const badgeClase = u.rol === "JEFE_ALMACEN" ? "badge-role-admin" : "badge-role-user";
-            
+            const badgeClase = ['ADMIN', 'ALMACEN', 'JEFE_ALMACEN'].includes(String(u.rol || '').toUpperCase())
+                ? "badge-role-admin"
+                : "badge-role-user";
+
             // Rellenar ceros a la izquierda para mantener la estética corporativa original (ej: USR-005)
             const idFormateado = String(u.idUsuario || u.id).padStart(3, '0');
 

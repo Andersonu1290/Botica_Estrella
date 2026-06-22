@@ -72,7 +72,7 @@ const API = {
             sessionStorage.removeItem('jwt_token');
 
             // Redirección automática
-            window.location.replace('admin/login');
+            window.location.replace('/admin/login');
 
             throw new Error(
                 'Sesión expirada o credenciales inválidas.'
@@ -95,7 +95,7 @@ const API = {
          */
         const responseText = await response.text();
 
-        let data = {};
+        let data;
 
         try {
 

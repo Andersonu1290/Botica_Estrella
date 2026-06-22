@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-md mx-auto py-16 px-4">
-    <div class="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-200">
-      
+    <div class="bg-white p-8 rounded-4xl shadow-xl border border-slate-200">
+
       <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-gradient-to-br from-medical-blue to-blue-400 rounded-2xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-4 shadow-lg">★</div>
+        <div class="w-16 h-16 bg-linear-to-br from-medical-blue to-blue-400 rounded-2xl flex items-center justify-center text-white font-black text-3xl mx-auto mb-4 shadow-lg">★</div>
         <h1 class="text-2xl font-black text-slate-800">{{ esRegistro ? 'Crear Cuenta' : 'Iniciar Sesión' }}</h1>
         <p class="text-slate-500 mt-2">Accede para gestionar tus compras y carrito.</p>
       </div>
@@ -42,6 +42,7 @@ import { ref, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { authStore } from '@/store/auth';
 import { carritoStore } from '@/store/carrito';
+import { normalizarSesionAutenticacion } from '@/utils/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -64,8 +65,11 @@ const procesarFormulario = async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: form.username, password: form.password })
       });
-      if (!res.ok) throw new Error("El usuario ya existe o hubo un error.");
-      
+        if (!res.ok) {
+          mensajeError.value = 'El usuario ya existe o hubo un error.';
+          return;
+        }
+
       alert("Cuenta creada. Ahora inicia sesión.");
       esRegistro.value = false;
       form.password = '';
@@ -76,19 +80,26 @@ const procesarFormulario = async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
-      if (!res.ok) throw new Error("Credenciales incorrectas.");
-      
+        if (!res.ok) {
+          mensajeError.value = 'Credenciales incorrectas.';
+          return;
+        }
+
       const data = await res.json();
-      
+      const usuarioAutenticado = normalizarSesionAutenticacion(data);
+
       // Seguridad: Verificamos que sea un CLIENTE, no un Admin
-      if (data.rol !== 'CLIENTE') {
-         throw new Error("Acceso denegado. Utilice el panel administrativo.");
+      if (usuarioAutenticado.rol !== 'CLIENTE') {
+          mensajeError.value = 'Acceso denegado. Utilice el panel administrativo.';
+          return;
       }
 
-      authStore.iniciarSesion(data);
-      await carritoStore.cargarCarritoBD(data.idUsuario); // Cargamos su carrito
-      
-      const redireccion = route.query.redirect || '/';
+      authStore.iniciarSesion(usuarioAutenticado);
+      await carritoStore.cargarCarritoBD(usuarioAutenticado.idUsuario || usuarioAutenticado.id); // Cargamos su carrito
+
+      const redireccion = Array.isArray(route.query.redirect)
+        ? route.query.redirect[0]
+        : route.query.redirect || '/';
       router.push(redireccion);
     }
   } catch (error) {
