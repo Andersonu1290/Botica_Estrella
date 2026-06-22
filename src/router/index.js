@@ -49,7 +49,7 @@ const router = createRouter({
         { path: '', name: 'home', component: HomeView },
         { path: 'productos', name: 'catalogo', component: CatalogoView },
         { path: 'producto/:id', name: 'detalleProducto', component: DetalleView },
-        { path: 'carrito', name: 'carrito', component: CarritoView },S
+        { path: 'carrito', name: 'carrito', component: CarritoView },
         { path: 'perfil', name: 'perfil', component: PerfilView, meta: { requiresClientAuth: true } },
         { path: 'nosotros', name: 'nosotros', component: NosotrosView },
         { path: 'checkout', name: 'checkout', component: CheckoutView, meta: { requiresClientAuth: true } },
