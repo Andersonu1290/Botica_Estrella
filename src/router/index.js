@@ -1,4 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authStore } from '@/store/auth'
+import {
+  esSesionAdminValida,
+  esSesionClienteValida,
+  obtenerAdminSesion
+} from '@/utils/auth'
 
 // Layouts
 import AdminLayout from '../layouts/AdminLayout.vue'
@@ -42,9 +48,9 @@ const router = createRouter({
         { path: 'productos', name: 'catalogo', component: CatalogoView },
         { path: 'producto/:id', name: 'detalleProducto', component: DetalleView },
         { path: 'carrito', name: 'carrito', component: CarritoView },
-        { path: 'perfil', name: 'perfil', component: PerfilView },
+        { path: 'perfil', name: 'perfil', component: PerfilView, meta: { requiresClientAuth: true } },
         { path: 'nosotros', name: 'nosotros', component: NosotrosView },
-        { path: 'checkout', name: 'checkout', component: CheckoutView },
+        { path: 'checkout', name: 'checkout', component: CheckoutView, meta: { requiresClientAuth: true } },
         { path: 'login', name: 'loginPublico', component: LoginPublicoView },
         { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView },
         { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView },
@@ -57,20 +63,58 @@ const router = createRouter({
       path: '/admin',
       component: AdminLayout,
       children: [
-        { path: '', name: 'login', component: Login, alias: 'login' },
-        { path: 'inventario', name: 'inventario', component: Inventario },
-        { path: 'venta', name: 'venta', component: Venta },
-        { path: 'categorias', name: 'categorias', component: Categorias },
-        { path: 'confirmacion-venta', name: 'confirmacionVenta', component: ConfirmacionVenta },
-        { path: 'historial-ventas', name: 'historialVentas', component: HistorialVentas },
-        { path: 'kardex', name: 'kardex', component: Kardex },
-        { path: 'mermas', name: 'mermas', component: Mermas },
-        { path: 'producto-form', name: 'productoForm', component: ProductoForm },
-        { path: 'reportes', name: 'reportes', component: Reportes },
-        { path: 'usuarios', name: 'usuarios', component: Usuarios }
+        { path: '', name: 'adminLogin', component: Login, alias: 'login', meta: { public: true } },
+        { path: 'inventario', name: 'inventario', component: Inventario, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'venta', name: 'venta', component: Venta, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'categorias', name: 'categorias', component: Categorias, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'confirmacion-venta', name: 'confirmacionVenta', component: ConfirmacionVenta, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'historial-ventas', name: 'historialVentas', component: HistorialVentas, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'kardex', name: 'kardex', component: Kardex, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'mermas', name: 'mermas', component: Mermas, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'producto-form', name: 'productoForm', component: ProductoForm, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'reportes', name: 'reportes', component: Reportes, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } },
+        { path: 'usuarios', name: 'usuarios', component: Usuarios, meta: { requiresAdminAuth: true, roles: ['ADMIN', 'ALMACEN'] } }
       ]
     }
   ],
+})
+
+router.beforeEach((to) => {
+  const requiereAdmin = to.matched.some((record) => record.meta.requiresAdminAuth);
+  const requiereCliente = to.matched.some((record) => record.meta.requiresClientAuth);
+  const esAdminSesionValida = esSesionAdminValida();
+  const esClienteSesionValida = esSesionClienteValida();
+
+  if (requiereAdmin) {
+    const rolesPermitidos = to.matched
+      .flatMap((record) => record.meta.roles || [])
+      .filter(Boolean);
+
+    const rolActual = String(obtenerAdminSesion()?.rol || '').toUpperCase();
+    const rolPermitido = rolesPermitidos.length === 0 || rolesPermitidos.includes(rolActual);
+
+    if (!esAdminSesionValida || !rolPermitido) {
+      return {
+        path: '/admin/login',
+        query: to.fullPath !== '/admin/login' ? { redirect: to.fullPath } : undefined
+      };
+    }
+  }
+
+  if (requiereCliente && !esClienteSesionValida) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath }
+    };
+  }
+
+  if (to.path === '/login' && esClienteSesionValida && String(authStore.usuarioActual?.rol || '').toUpperCase() === 'CLIENTE') {
+    return { path: '/' };
+  }
+
+  if ((to.path === '/admin' || to.path === '/admin/login') && esAdminSesionValida) {
+    return { path: '/admin/inventario' };
+  }
 })
 
 export default router

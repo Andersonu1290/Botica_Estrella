@@ -1,6 +1,43 @@
 document.addEventListener("DOMContentLoaded", function() {
     const frmLogin = document.getElementById("frmLogin");
-    
+    const rolesAdmin = ['ADMIN', 'ALMACEN', 'JEFE_ALMACEN'];
+
+    const resolverRol = (respuesta = {}) => {
+        const rolDirecto = respuesta.rol ?? respuesta.role ?? respuesta.authority ?? null;
+
+        if (typeof rolDirecto === 'string' && rolDirecto.trim()) {
+            return rolDirecto.replace(/^ROLE_/, '').trim().toUpperCase();
+        }
+
+        if (Array.isArray(respuesta.authorities) && respuesta.authorities.length > 0) {
+            const autoridad = respuesta.authorities[0];
+            if (typeof autoridad === 'string' && autoridad.trim()) {
+                return autoridad.replace(/^ROLE_/, '').trim().toUpperCase();
+            }
+        }
+
+        return '';
+    };
+
+    const normalizarSesion = (respuesta) => {
+        const usuario = respuesta && typeof respuesta === 'object' && respuesta.usuario && typeof respuesta.usuario === 'object'
+            ? respuesta.usuario
+            : (respuesta || {});
+
+        const sesion = {
+            ...respuesta,
+            ...usuario,
+            token: respuesta?.token || usuario.token || null
+        };
+
+        if (!sesion.rol) {
+            sesion.rol = resolverRol(respuesta) || resolverRol(usuario);
+        }
+
+        delete sesion.usuario;
+        return sesion;
+    };
+
     if (frmLogin) {
         // Función asíncrona para manejar la comunicación con el backend sin recargar la página
         frmLogin.addEventListener("submit", async function(e) {
@@ -39,13 +76,34 @@ document.addEventListener("DOMContentLoaded", function() {
                     password: clave 
                 });
 
-                // FASE 2: Gestión de Estado local (Guardamos el JSON con ID, Nombre y Rol del Jefe de Almacén)
-                sessionStorage.setItem('usuarioActivo', JSON.stringify(respuesta));
-                
-                // Si tu Spring Boot ya genera Token JWT, guardamos la credencial de red:
-                if (respuesta.token) {
-                    sessionStorage.setItem('jwt_token', respuesta.token);
+                const usuarioActivo = normalizarSesion(respuesta);
+                const rolNormalizado = String(usuarioActivo.rol || '').trim().toUpperCase();
+
+                if (!rolesAdmin.includes(rolNormalizado)) {
+                    if (msgError) {
+                        const txtErrorSpan = document.getElementById('txtErrorSpan');
+                        if (txtErrorSpan) txtErrorSpan.textContent = 'Acceso denegado. Utilice el panel de clientes.';
+                        msgError.style.display = 'block';
+                    }
+
+                    btn.disabled = false;
+                    btn.style.backgroundColor = originalBg;
+                    btn.style.cursor = 'pointer';
+                    text.innerHTML = originalText;
+                    icon.innerHTML = originalIcon;
+                    icon.style.animation = 'none';
+                    return;
                 }
+
+                // FASE 2: Gestión de Estado local (Guardamos el JSON ya normalizado)
+                sessionStorage.setItem('usuarioActivo', JSON.stringify(usuarioActivo));
+
+                // Si tu Spring Boot ya genera Token JWT, guardamos la credencial de red:
+                if (usuarioActivo.token) {
+                    sessionStorage.setItem('jwt_token', usuarioActivo.token);
+                }
+
+                window.location.assign('/admin/inventario');
 
             } catch (error) {
                 // 3. Manejo de Errores: Captura credenciales incorrectas o caídas del servidor

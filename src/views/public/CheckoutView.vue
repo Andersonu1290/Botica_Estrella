@@ -1,12 +1,12 @@
 <template>
-  <div class="max-w-[75rem] mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-300 mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <h1 class="text-3xl font-black text-slate-800 mb-8">Finalizar Pedido</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       <div class="lg:col-span-8 space-y-6">
         
-        <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200">
+        <div class="bg-white p-6 md:p-8 rounded-4xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-medical-blue text-white flex items-center justify-center text-xs shadow-md">1</span>
             Datos de Contacto
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200">
+        <div class="bg-white p-6 md:p-8 rounded-4xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-medical-blue text-white flex items-center justify-center text-xs shadow-md">2</span>
             Dirección de Envío
@@ -64,7 +64,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200">
+        <div class="bg-white p-6 md:p-8 rounded-4xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-medical-blue text-white flex items-center justify-center text-xs shadow-md">3</span>
             Opciones de Envío
@@ -88,7 +88,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200">
+        <div class="bg-white p-6 md:p-8 rounded-4xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-black text-slate-800 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-full bg-medical-blue text-white flex items-center justify-center text-xs shadow-md">4</span>
             Pago y Comprobante
@@ -134,7 +134,7 @@
       </div>
 
       <div class="lg:col-span-4">
-        <div class="bg-slate-900 rounded-[2rem] p-6 md:p-8 text-white sticky top-28 shadow-xl">
+          <div class="bg-slate-900 rounded-4xl p-6 md:p-8 text-white sticky top-28 shadow-xl">
           <h2 class="text-xl font-black mb-6 flex items-center gap-2">
             <svg class="w-5 h-5 text-medical-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
             Resumen del Pedido
@@ -179,6 +179,7 @@
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { carritoStore } from '@/store/carrito';
+import { authStore } from '@/store/auth';
 import { apiClient } from '@/services/apiClient';
 
 const router = useRouter();
@@ -232,11 +233,11 @@ const procesarPago = async () => {
     return;
   }
 
-  const usuarioGuardado = JSON.parse(localStorage.getItem('clienteEstrella'));
+  const usuarioGuardado = authStore.usuarioActual;
 
   if (!usuarioGuardado || !usuarioGuardado.idUsuario) {
     alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
-    router.push('/login');
+    router.push('/login?redirect=/checkout');
     return;
   }
 
@@ -307,6 +308,11 @@ const procesarPago = async () => {
 
   } catch (err) {
     console.error(err);
+    if (String(err.message || '').toLowerCase().includes('sesión')) {
+      authStore.cerrarSesion();
+      router.push('/login?redirect=/checkout');
+      return;
+    }
     alert("Error procesando pedido: " + (err.message || "Intenta de nuevo"));
   } finally {
     procesando.value = false;

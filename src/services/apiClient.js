@@ -1,10 +1,60 @@
+import { authStore } from '@/store/auth';
+import { esJwtExpirado, obtenerTokenCliente } from '@/utils/auth';
+
 const BASE_URL = (import.meta.env.VITE_API_URL || '/api') + '/v1';
+
+const buildHeaders = (isMultipart = false, incluirAuth = true) => {
+  const headers = {};
+
+  if (!isMultipart) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  if (incluirAuth) {
+    const token = obtenerTokenCliente();
+    if (token && !esJwtExpirado(token)) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  return headers;
+};
+
+const manejarRespuesta = async (respuesta) => {
+  if (respuesta.status === 401) {
+    authStore.cerrarSesion();
+    throw new Error('Tu sesión expiró. Inicia sesión nuevamente.');
+  }
+
+  if (respuesta.status === 204) {
+    return null;
+  }
+
+  const texto = await respuesta.text();
+
+  let data;
+
+  try {
+    data = texto ? JSON.parse(texto) : {};
+  } catch {
+    data = { mensaje: texto };
+  }
+
+  if (!respuesta.ok) {
+    throw new Error(data.error || data.mensaje || `Error HTTP ${respuesta.status}`);
+  }
+
+  return data;
+};
 
 export const apiClient = {
   
   async obtenerProductos() {
     try {
-      const respuesta = await fetch(`${BASE_URL}/productos`);
+      const respuesta = await fetch(`${BASE_URL}/productos`, {
+        method: 'GET',
+        headers: buildHeaders(false, false)
+      });
       if (!respuesta.ok) throw new Error('Error al obtener el inventario');
       return await respuesta.json();
     } catch (error) {
@@ -15,7 +65,10 @@ export const apiClient = {
 
   async obtenerProductoPorId(id) {
     try {
-      const respuesta = await fetch(`${BASE_URL}/productos/${id}`);
+      const respuesta = await fetch(`${BASE_URL}/productos/${id}`, {
+        method: 'GET',
+        headers: buildHeaders(false, false)
+      });
       if (!respuesta.ok) throw new Error(`Error al obtener el producto con ID: ${id}`);
       return await respuesta.json();
     } catch (error) {
@@ -28,16 +81,11 @@ export const apiClient = {
     try {
       const respuesta = await fetch(`${BASE_URL}/pedidos`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: buildHeaders(),
         body: JSON.stringify(pedidoPayload)
       });
       
-      if (!respuesta.ok) {
-        const errorData = await respuesta.json().catch(() => null);
-        throw new Error(errorData?.error || `Error del servidor: ${respuesta.status}`);
-      }
-      
-      return await respuesta.json(); 
+      return await manejarRespuesta(respuesta);
     } catch (error) {
       console.error("Error crítico procesando pedido de cliente:", error);
       throw error; 
@@ -46,19 +94,24 @@ export const apiClient = {
 
   async obtenerMisCompras(idUsuario) {
     try {
-      const respuesta = await fetch(`${BASE_URL}/pedidos/cliente/${idUsuario}`);
-      if (!respuesta.ok) throw new Error('No se pudo cargar el historial de compras.');
-      const data = await respuesta.json();
-      return data.pedidos || []; 
+      const respuesta = await fetch(`${BASE_URL}/pedidos/cliente/${idUsuario}`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
+      const data = await manejarRespuesta(respuesta);
+      return Array.isArray(data) ? data : (data.pedidos || []);
     } catch (error) {
       console.error("Error en apiClient al traer compras:", error);
-      return [];
+      throw error;
     }
   },
 
   async obtenerCategorias() {
     try {
-      const respuesta = await fetch(`${BASE_URL}/categorias`);
+      const respuesta = await fetch(`${BASE_URL}/categorias`, {
+        method: 'GET',
+        headers: buildHeaders(false, false)
+      });
       if (!respuesta.ok) throw new Error('Error al obtener categorías');
       return await respuesta.json();
     } catch (error) {
@@ -77,7 +130,10 @@ export const apiClient = {
   
   async obtenerHistorialPOS() {
     try {
-      const respuesta = await fetch(`${BASE_URL}/ventas/historial`);
+      const respuesta = await fetch(`${BASE_URL}/ventas/historial`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
       if (!respuesta.ok) throw new Error('Error al obtener ventas locales');
       return await respuesta.json();
     } catch (error) {
@@ -88,10 +144,13 @@ export const apiClient = {
 
   async obtenerTodosLosPedidosWeb() {
     try {
-      const respuesta = await fetch(`${BASE_URL}/pedidos/admin/todos`);
+      const respuesta = await fetch(`${BASE_URL}/pedidos/admin/todos`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
       if (!respuesta.ok) throw new Error('Error al obtener pedidos web');
       const data = await respuesta.json();
-      return data.pedidos || [];
+      return Array.isArray(data) ? data : (data.pedidos || []);
     } catch (error) {
       console.error("Error cargando pedidos web:", error);
       return [];
@@ -108,7 +167,7 @@ export const apiClient = {
         url += `&numeroSeguimiento=${encodeURIComponent(numeroSeguimiento)}`;
       }
 
-      const respuesta = await fetch(url, { method: 'PUT' });
+      const respuesta = await fetch(url, { method: 'PUT', headers: buildHeaders() });
       if (!respuesta.ok) throw new Error('Error al actualizar estado');
       return await respuesta.json();
     } catch (error) {
@@ -121,7 +180,8 @@ export const apiClient = {
   async cancelarPedidoWeb(idVentaCliente) {
     try {
       const respuesta = await fetch(`${BASE_URL}/pedidos/${idVentaCliente}/cancelar`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: buildHeaders()
       });
       if (!respuesta.ok) {
         const err = await respuesta.json().catch(() => null);
