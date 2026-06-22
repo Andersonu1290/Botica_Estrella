@@ -22,6 +22,7 @@ import ConfirmacionView from '../views/public/ConfirmacionView.vue'
 import LoginPublicoView from '@/views/public/LoginPublicoView.vue'
 import LibroReclamacionesView from '../views/public/LibroReclamacionesView.vue' 
 import SeguimientoView from '../views/public/SeguimientoView.vue'
+import Politicas_Privacidad_View from '@/views/public/Politicas_Privacidad_View.vue'
 import TerminosCondicionesView from '../views/public/TerminosCondicionesView.vue'
 
 // Vistas del Admin
@@ -48,13 +49,14 @@ const router = createRouter({
         { path: '', name: 'home', component: HomeView },
         { path: 'productos', name: 'catalogo', component: CatalogoView },
         { path: 'producto/:id', name: 'detalleProducto', component: DetalleView },
-        { path: 'carrito', name: 'carrito', component: CarritoView },
+        { path: 'carrito', name: 'carrito', component: CarritoView },S
         { path: 'perfil', name: 'perfil', component: PerfilView, meta: { requiresClientAuth: true } },
         { path: 'nosotros', name: 'nosotros', component: NosotrosView },
         { path: 'checkout', name: 'checkout', component: CheckoutView, meta: { requiresClientAuth: true } },
         { path: 'login', name: 'loginPublico', component: LoginPublicoView },
         { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView },
         { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView },
+        { path: 'politicas-privacidad', name: 'politicasPrivcadidad', component: Politicas_Privacidad_View},
         { path: 'seguimiento', name: 'seguimiento', component: SeguimientoView },
         { path: 'terminos-condiciones', name: 'terminosCondiciones', component: TerminosCondicionesView }
       ]
