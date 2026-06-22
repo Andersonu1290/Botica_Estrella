@@ -122,7 +122,7 @@
           <h3 class="text-lg font-bold mb-6 text-white tracking-wide">Legal y Ayuda</h3>
           <ul class="space-y-3">
             <li><router-link to="/terminos-condiciones" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Términos y Condiciones</router-link></li>
-            <li><a href="#" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Políticas de Privacidad</a></li>
+            <li><a href="politicas-privacidad" class="text-blue-200 hover:text-white hover:underline transition-all text-sm">Políticas de Privacidad</a></li>
             <li>
   <router-link
     to="/libro-reclamaciones"

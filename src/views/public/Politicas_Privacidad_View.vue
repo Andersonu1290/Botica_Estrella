@@ -1,8 +1,5 @@
 <template>
     <main class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full flex-grow">
-
-        ```
-        <!-- Hero -->
         <section
             class="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-medical-blue to-blue-500 p-10 md:p-16 shadow-xl mb-12">
             <div class="relative z-10">
@@ -137,8 +134,6 @@
             </div>
 
         </section>
-        ```
-
     </main>
 </template>
 
