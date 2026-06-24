@@ -4,19 +4,16 @@ const techPalette = [
 ];
 
 document.addEventListener("DOMContentLoaded", async function() {
-    // 1. Verificación de seguridad
     if (!sessionStorage.getItem('usuarioActivo')) {
         window.location.href = 'login';
         return;
     }
 
-    // 2. Disparar la carga total del Dashboard
     await cargarDatosDashboard();
 });
 
 async function cargarDatosDashboard() {
     try {
-        // En el backend (ReporteController), todo está unificado en una sola petición a este endpoint:
         const dashboardInfo = await API.get('/reportes/dashboard');
 
         // --- A. ACTUALIZAR KPIs NUMÉRICOS ---
@@ -29,46 +26,53 @@ async function cargarDatosDashboard() {
         // --- B. RENDERIZAR TABLA DE AUDITORÍA EN VIVO ---
         renderizarTablaVentas(dashboardInfo.ultimasVentas);
 
-        // --- C. PROCESAR DATOS Y RENDERIZAR GRÁFICOS (CON MEMORIA DE COLOR) ---
+        // --- C. PROCESAR DATOS Y RENDERIZAR GRÁFICOS ---
         const topProd = dashboardInfo.topProd || []; 
         const catStock = dashboardInfo.catStock || []; 
             
-        // 1. Creamos la memoria del diccionario de colores
         const diccionarioColores = {};
         
-        // 2. Procesar Categorías (Gráfico de Dona)
+        // 1. Procesar Categorías (Gráfico de Dona) - ESTO FALTABA EN TU ERROR
         const catLabels = [];
         const catData = [];
         const catColors = [];
 
         catStock.forEach((item, index) => {
-            // Java envía: "Categoria||Stock"
             const [categoria, stock] = item.split('||');
             catLabels.push(categoria);
             catData.push(parseInt(stock || 0));
 
-            // Le asignamos un color de la paleta y lo GUARDAMOS en memoria
             const colorAsignado = techPalette[index % techPalette.length];
             diccionarioColores[categoria] = colorAsignado; 
             catColors.push(colorAsignado);
         });
 
-        // 3. Procesar Top Productos (Gráfico de Barras)
+        // 2. Procesar Top Productos (Gráfico de Barras con nombres acortados)
         const topLabels = [];
         const topData = [];
         const topColors = [];
 
         topProd.forEach(item => {
-            // Java envía: "Producto||Ventas||Categoria"
-            const [producto, ventas, categoria] = item.split('||');
-            topLabels.push(producto);
+            const [productoFull, ventas, categoria] = item.split('||');
+            
+            // ✂️ Cortamos el nombre para que el gráfico se vea elegante
+            let productoCorto = productoFull.split(' ')[0];
+            
+            if (productoCorto.length <= 4 && productoFull.split(' ').length > 1) {
+                productoCorto += " " + productoFull.split(' ')[1];
+            }
+            if (productoCorto.length > 12) {
+                productoCorto = productoCorto.substring(0, 12) + '...';
+            }
+
+            topLabels.push(productoCorto);
             topData.push(parseInt(ventas || 0));
 
-            // Buscamos el color de su familia. Si no tiene, se pinta gris claro.
             const colorHeredado = diccionarioColores[categoria] || '#9ca3af';
             topColors.push(colorHeredado);
         });
             
+        // Inicializamos ambos gráficos con las variables ya definidas
         inicializarGraficos(topLabels, topData, topColors, catLabels, catData, catColors);
 
     } catch (error) {
@@ -85,7 +89,7 @@ function renderizarTablaVentas(ventas) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center p-30 text-muted">
-                    No hay transacciones recientes para mostrar en la auditoría.
+                    No hay transacciones recientes para mostrar.
                 </td>
             </tr>`;
         return;
@@ -93,15 +97,20 @@ function renderizarTablaVentas(ventas) {
 
     tbody.innerHTML = "";
     
-    // Solo tomamos las primeras 5 ventas para la vista rápida
-    const ultimas = ventas.slice(0, 5);
-
-    ultimas.forEach(v => {
-        const anulada = v.estado === 'ANULADA';
+    // Mostramos las ventas consolidadas (Web y Física)
+    ventas.forEach(v => {
+        const anulada = v.estado === 'ANULADA' || v.estado === 'CANCELADO';
         const rowClass = anulada ? "row-disabled" : "";
-        const badge = anulada 
-            ? '<span class="badge badge-alert">ANULADA</span>' 
-            : '<span class="badge badge-optimal">COMPLETADA</span>';
+        
+        let badge = '';
+        if (anulada) {
+            badge = '<span class="badge badge-alert">ANULADA</span>';
+        } else if (v.estado === 'COMPLETADA' || v.estado === 'ENTREGADO') {
+            badge = '<span class="badge badge-optimal">COMPLETADA</span>';
+        } else {
+            // Para pedidos WEB que están en proceso
+            badge = `<span class="badge" style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid #3b82f6;">${v.estado}</span>`;
+        }
 
         tbody.innerHTML += `
             <tr class="${rowClass}">
@@ -120,11 +129,9 @@ function inicializarGraficos(topLabels, topData, topColors, catLabels, catData, 
     Chart.defaults.color = '#9ca3af';
     Chart.defaults.font.family = "'Inter', sans-serif";
 
-    // Destruir gráficos anteriores si existen (útil si hay un botón de refresh)
     if (window.miBarChart) window.miBarChart.destroy();
     if (window.miDoughnutChart) window.miDoughnutChart.destroy();
 
-    // --- GRÁFICO DE BARRAS (Top Productos con color heredado) ---
     const ctxBar = document.getElementById('barChart');
     if (ctxBar) {
         window.miBarChart = new Chart(ctxBar.getContext('2d'), {
@@ -134,7 +141,7 @@ function inicializarGraficos(topLabels, topData, topColors, catLabels, catData, 
                 datasets: [{
                     label: 'Unidades Vendidas',
                     data: topData,
-                    backgroundColor: topColors, // 🌟 AHORA USA EL ARREGLO DE COLORES HEREDADOS
+                    backgroundColor: topColors,
                     borderWidth: 1,
                     borderRadius: 6
                 }]
@@ -151,7 +158,6 @@ function inicializarGraficos(topLabels, topData, topColors, catLabels, catData, 
         });
     }
 
-    // --- GRÁFICO DE DONA (Categorías y su color base) ---
     const ctxDoughnut = document.getElementById('doughnutChart');
     if (ctxDoughnut) {
         window.miDoughnutChart = new Chart(ctxDoughnut.getContext('2d'), {
@@ -160,7 +166,7 @@ function inicializarGraficos(topLabels, topData, topColors, catLabels, catData, 
                 labels: catLabels,
                 datasets: [{
                     data: catData,
-                    backgroundColor: catColors, // 🌟 AHORA USA EL ARREGLO DE COLORES BASE
+                    backgroundColor: catColors,
                     borderColor: '#1f2937',
                     borderWidth: 2,
                     hoverOffset: 12
