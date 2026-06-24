@@ -1,163 +1,132 @@
 <template>
-  <div class="max-w-4xl mx-auto py-12 px-4 w-full">
-    
-    <div class="text-center mb-10">
-      <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner animate-bounce">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-      </div>
-      <h1 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">¡Pago Procesado con Éxito!</h1>
-      <p class="text-slate-500 text-lg">Tu pedido ya entró a nuestra cola de logística.</p>
-    </div>
-
-    <div class="bg-white max-w-2xl mx-auto shadow-2xl overflow-hidden border border-slate-200 relative">
-      
-      <div class="absolute top-0 left-0 w-full h-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHBvbHlnb24gcG9pbnRzPSIwLDAgNSwxMCAxMCwwIiBmaWxsPSIjZjhmYWZjIi8+PC9zdmc+')]"></div>
-
-      <div class="text-center p-8 pt-12 border-b-2 border-dashed border-slate-300 bg-slate-50">
-        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-widest">Botica Estrella S.A.C.</h2>
-        <p class="text-sm text-slate-500 font-mono mt-2">RUC: 20546987123</p>
-        <p class="text-sm text-slate-500 font-mono">Av. Garcilaso de la Vega 1348, Lima</p>
-
-        <div class="mt-8 border-4 border-slate-800 p-4 md:p-6 inline-block bg-white shadow-sm">
-          <p class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-widest">COMPROBANTE DE PEDIDO WEB</p>
-          <p class="text-2xl font-mono font-bold text-medical-blue mt-2">{{ ticketGenerado || 'CARGANDO...' }}</p>
-        </div>
-      </div>
-
-      <div class="p-16 text-center" v-if="cargando">
-        <span class="animate-spin inline-block w-10 h-10 border-4 border-medical-blue border-t-transparent rounded-full mb-4"></span>
-        <p class="text-slate-500 font-mono text-sm uppercase tracking-widest">Recuperando detalles de la orden...</p>
-      </div>
-
-      <div class="p-6 md:p-10" v-else-if="pedido">
+  <div class="dashboard-container">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-mono mb-8 bg-slate-50 p-6 rounded-xl border border-slate-100">
-          <div>
-            <span class="font-bold text-slate-400">FECHA DE EMISIÓN:</span><br> 
-            <span class="text-slate-800 font-bold">{{ formatearFecha(pedido.fechaPedido) }}</span>
-          </div>
-          <div>
-            <span class="font-bold text-slate-400">MÉTODO DE PAGO:</span><br> 
-            <span class="text-slate-800 font-bold uppercase">{{ pedido.tipoPago.replace('_', ' ') }}</span>
-          </div>
-          <div class="md:col-span-2">
-            <span class="font-bold text-slate-400">CLIENTE RECEPTOR:</span><br> 
-            <span class="text-slate-800 font-bold uppercase">{{ pedido.nombreCliente }} {{ pedido.apellidoCliente || '' }}</span>
-          </div>
-          <div class="md:col-span-2">
-            <span class="font-bold text-slate-400">DIRECCIÓN DE DESTINO:</span><br> 
-            <span class="text-slate-800 font-bold uppercase">{{ pedido.direccionEnvio }} {{ pedido.numeroCalle || '' }}, {{ pedido.ciudad }}</span>
-          </div>
+        <div class="success-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Operación Comercial Procesada Exitosamente
         </div>
+        
+        <div class="grid-container">
+            
+            <div class="form-side">
+                <h3 class="text-white d-flex align-center gap-10 mb-15">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" width="20" height="20">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    Respuesta de Pasarela Bancaria
+                </h3>
+                
+                <div class="pos-voucher">
+                    <div class="pos-header">Log de Transacción (Adapter API)</div>
+                    <!-- JS Nativo inyecta aquí la respuesta del ADAPTER -->
+                    <div class="pos-body" id="posVoucherBody">Cargando log de transacción...</div>
+                </div>
 
-        <table class="w-full text-sm font-mono mb-8">
-          <thead>
-            <tr class="border-y-2 border-dashed border-slate-300 text-slate-500">
-              <th class="py-3 text-left w-12">CANT</th>
-              <th class="py-3 text-left">DESCRIPCIÓN</th>
-              <th class="py-3 text-right w-28">IMPORTE</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in pedido.detalles" :key="item.idDetalle" class="border-b border-slate-100">
-              <td class="py-4 align-top font-bold">{{ item.cantidad }}</td>
-              <td class="py-4 pr-4 uppercase text-slate-700">{{ item.nombreProducto }}</td>
-              <td class="py-4 text-right align-top font-bold">S/ {{ formatPrecio(item.subtotal) }}</td>
-            </tr>
-          </tbody>
-        </table>
+                <div class="info-box">
+                    <p class="text-muted text-sm m-0">El componente fue cambiado a estado 'ASIGNADO' y registrado en el Kardex.</p>
+                </div>
+                
+                <!-- JS Nativo muestra esto si el OBSERVER dispara una alerta de stock -->
+                <div class="note-box" id="panelAlertasStock" style="display: none;">
+                    <h4 class="text-warning d-flex align-center gap-10 mb-15 mt-0 text-sm">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        EJECUCIÓN PATRÓN OBSERVER (Notificaciones)
+                    </h4>
+                    <div id="contenedorAlertas"></div>
+                </div>
 
-        <div class="w-full md:w-2/3 ml-auto text-sm font-mono space-y-3 bg-slate-50 p-6 rounded-xl border border-slate-100">
-          <div class="flex justify-between text-slate-500">
-            <span>SUBTOTAL:</span>
-            <span>S/ {{ formatPrecio(pedido.subtotal / 1.18) }}</span>
-          </div>
-          <div class="flex justify-between text-slate-500">
-            <span>IGV (18%):</span>
-            <span>S/ {{ formatPrecio(pedido.subtotal - (pedido.subtotal / 1.18)) }}</span>
-          </div>
-          <div class="flex justify-between text-slate-500">
-            <span>FLETE ({{ pedido.tipoEnvio }}):</span>
-            <span>S/ {{ formatPrecio(pedido.costoEnvio) }}</span>
-          </div>
-          <div class="flex justify-between text-xl font-black text-slate-800 border-t-2 border-dashed border-slate-300 pt-4 mt-2">
-            <span>TOTAL PAGADO:</span>
-            <span>S/ {{ formatPrecio(pedido.total) }}</span>
-          </div>
+                <a href="/admin/venta" class="btn-submit-tech mt-20" style="text-decoration: none; box-sizing: border-box; display: block; text-align: center;">
+                    Finalizar y Volver a Caja
+                </a>
+            </div>
+
+            <div class="flex-col-1-5 d-flex justify-center">
+                
+                <div class="electronic-receipt" id="comprobanteElectronico">
+                    <div class="watermark">PAGADO</div>
+                    
+                    <div class="receipt-header">
+                        <img src="../../../public/admin/img/logo_boticaestrella.png" alt="boticaestrella" class="receipt-logo" onerror="this.src='https://via.placeholder.com/200x60/ffffff/000000?text=boticaestrella'">
+                        
+                        <div class="company-info">
+                            <strong>Botica Estrella S.A.C.</strong><br>
+                            RUC: 20546987123 | Av. Garcilaso de la Vega 1348, Lima<br>
+                            Teléfono: (01) 555-1234 | soporte@boticaestrella.com
+                        </div>
+                        
+                        <div id="documentoTitulo" class="doc-title">COMPROBANTE ELECTRÓNICO</div>
+                    </div>
+
+                    <div class="receipt-body">
+                        <!-- JS Nativo inyecta aquí el resultado del FACTORY de comprobantes -->
+                        <pre id="receiptDocBody">Generando representación del documento...</pre>
+                    </div>
+
+                    <div class="receipt-footer">
+                        <div class="legal-text">Representación impresa de Documento Electrónico<br>Consulte su validez en www.sunat.gob.pe</div>
+                        <div class="barcode">Facturacion-boticaestrella</div>
+                    </div>
+                </div>
+                
+            </div>
+
         </div>
-
-      </div>
-
-      <div class="p-6 bg-slate-50 text-center border-t border-slate-200">
-        <p class="text-[10px] text-slate-400 font-mono uppercase tracking-widest leading-relaxed">
-          Documento interno de control e-commerce.<br>
-          Se ha enviado el comprobante oficial (Boleta/Factura) a su correo electrónico.<br>
-          Gracias por su compra.
-        </p>
-      </div>
-
     </div>
-
-    <div class="max-w-2xl mx-auto mt-10 flex flex-col sm:flex-row gap-4">
-      <router-link to="/perfil" class="flex-1 bg-medical-blue text-white py-4 rounded-xl font-black text-lg hover:bg-medical-dark transition-all text-center shadow-lg active:scale-95">
-        Rastrear mi pedido
-      </router-link>
-      <router-link to="/" class="flex-1 bg-white text-slate-600 border-2 border-slate-200 py-4 rounded-xl font-black text-lg hover:border-medical-blue hover:text-medical-blue transition-all text-center active:scale-95">
-        Volver a la Tienda
-      </router-link>
-    </div>
-
-  </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router'; 
-import { authStore } from '@/store/auth';
-import { apiClient } from '@/services/apiClient';
+<script>
+export default {
+  name: 'ConfirmacionVentaView',
+  mounted() {
+    // 1. Inyectamos la variable de entorno en memoria global para api.js
+    window.VITE_API_URL = import.meta.env.VITE_API_URL;
 
-const route = useRoute();
-const ticketGenerado = ref('');
-const pedido = ref(null);
-const cargando = ref(true);
+    // 2. Carga secuencial y segura de scripts sin duplicados
+    this.cargarScript('/admin/js/api.js')
+      .then(() => this.cargarScript('/admin/js/utils.js'))
+      .then(() => this.cargarScript('/admin/js/confirmacionventa.js'))
+      .then(() => {
+        // 3. Lanzamos el chispazo para inicializar la lógica nativa de tus scripts
+        window.document.dispatchEvent(new Event("DOMContentLoaded", {
+          bubbles: true,
+          cancelable: true
+        }));
+      })
+      .catch(err => console.error("Error al inyectar la capa lógica:", err));
+  },
+  methods: {
+    cargarScript(ruta) {
+      return new Promise((resolve, reject) => {
+        const scriptExistente = document.querySelector(`script[src="${ruta}"]`);
+        if (scriptExistente) { resolve(); return; }
 
-const formatPrecio = (precio) => Number(precio).toFixed(2);
-
-const formatearFecha = (fechaStr) => {
-  if (!fechaStr) return '-';
-  if (Array.isArray(fechaStr)) {
-    const [year, month, day, hour = 0, minute = 0] = fechaStr;
-    const fechaObj = new Date(year, month - 1, day, hour, minute);
-    return fechaObj.toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-  }
-  return new Date(fechaStr).toLocaleDateString('es-PE', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-};
-
-onMounted(async () => {
-  // 🌟 EL FIX DEL SCROLL PARA EVITAR EL ESPACIO BLANCO ABAJO
-  window.scrollTo(0, 0);
-  setTimeout(() => {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  }, 50);
-
-  // 🌟 OBTENER LOS DATOS REALES DE LA BASE DE DATOS
-  if (route.query.ticket) {
-    ticketGenerado.value = route.query.ticket;
-    
-    if (authStore.estaLogueado) {
-      try {
-        const compras = await apiClient.obtenerMisCompras(authStore.usuarioActual.idUsuario);
-        // Buscamos el pedido exacto que acaba de generar por su NroPedido (Ej: PED-2026-00001)
-        pedido.value = compras.find(c => c.nroPedido === ticketGenerado.value);
-      } catch (error) {
-        console.error("Error cargando el comprobante:", error);
-      } finally {
-        cargando.value = false;
-      }
+        const script = document.createElement('script');
+        script.src = ruta;
+        // Le ponemos una clase para poder limpiarlo después
+        script.className = 'script-confirmacion-modulo';
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
     }
-  } else {
-    cargando.value = false;
+  },
+  unmounted() {
+    // Limpieza al salir de la pantalla para evitar bugs de memoria
+    const scriptsCargados = document.querySelectorAll('.script-confirmacion-modulo');
+    scriptsCargados.forEach(script => script.remove());
   }
-});
+}
 </script>
+
+<style scoped>
+/* Tu CSS original de administrador funciona perfecto aquí */
+</style>

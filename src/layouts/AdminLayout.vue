@@ -1,9 +1,6 @@
 <template>
   <div class="admin-container">
     <router-view />
-    <footer class="admin-legal-footer">
-      <router-link to="/terminos-condiciones">Términos y Condiciones</router-link>
-    </footer>
   </div>
 </template>
 

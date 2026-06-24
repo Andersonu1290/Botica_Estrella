@@ -125,7 +125,7 @@ function renderizarTablaCarrito() {
                 <td>${item.nombre}</td>
                 <td>${item.nroSerie}</td>
                 <td>${formatMoneda(item.precio)}</td>
-                <td><button onclick="eliminarDelCarrito('${item.nroSerie}')">Quitar</button></td>
+                <td><button onclick="eliminarDelCarrito('${item.nroSerie}')" class="btn-tech" style="padding: 4px 8px; font-size: 12px; background: #ef4444; border: none; color: white;">Quitar</button></td>
             </tr>
         `;
     });
@@ -137,7 +137,7 @@ function renderizarTablaCarrito() {
  * Totales
  */
 function actualizarTotales(subtotal) {
-    const igv = subtotal * 0.18;
+    // El IGV es solo referencial, se cobra el total completo en POS
     const total = subtotal;
 
     const lblTotal = document.getElementById("lblTotal");
@@ -243,7 +243,7 @@ async function procesarVenta(e) {
 }
 
 /**
- * INIT
+ * INIT (LÓGICA DE INICIO Y EVENTOS)
  */
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -254,6 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await cargarProductosVenta();
 
+    // Eventos de selección y carrito
     document.getElementById("cboProducto")
         .addEventListener("change", e => cargarSeriesPorProducto(e.target.value));
 
@@ -262,4 +263,87 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("frmVenta")
         .addEventListener("submit", procesarVenta);
+
+
+    // ==========================================
+    // MAGIA DE AUTOCOMPLETADO DE CLIENTES POR DNI
+    // ==========================================
+    const txtDocCliente = document.getElementById("txtDocCliente");
+    const txtNombreCliente = document.getElementById("txtNombreCliente");
+    const txtCorreoCliente = document.getElementById("txtCorreoCliente");
+
+    if (txtDocCliente) {
+        txtDocCliente.addEventListener("keyup", async (e) => {
+            const dni = e.target.value.trim();
+            
+            // Si el DNI tiene 8 caracteres (DNI) o 11 (RUC), disparamos la búsqueda
+            if (dni.length === 8 || dni.length === 11) {
+                
+                txtNombreCliente.placeholder = "Buscando en base de datos...";
+                
+                try {
+                    // 🌟 USAMOS TU OBJETO 'API' en lugar de fetch para no romper las rutas
+                    const cliente = await API.get(`/ventas/cliente/${dni}`);
+                    
+                    if (cliente && cliente.nombreCompleto) {
+                        // ¡Cliente encontrado! Autorellenamos los campos
+                        txtNombreCliente.value = cliente.nombreCompleto;
+                        
+                        if (cliente.correo && !cliente.correo.includes("sin_correo")) {
+                            txtCorreoCliente.value = cliente.correo;
+                        }
+
+                        // 🔒 BLOQUEAMOS LOS CAMPOS (Solo Lectura)
+                        txtNombreCliente.readOnly = true;
+                        txtCorreoCliente.readOnly = true;
+                        // Les damos un fondo plomizo para que el cajero sepa que están bloqueados
+                        txtNombreCliente.style.backgroundColor = "rgba(255,255,255,0.1)"; 
+                        txtCorreoCliente.style.backgroundColor = "rgba(255,255,255,0.1)";
+                        txtNombreCliente.style.cursor = "not-allowed";
+                        txtCorreoCliente.style.cursor = "not-allowed";
+
+                        // Efecto visual de éxito verde
+                        txtDocCliente.style.borderColor = "#10b981";
+                        txtNombreCliente.style.borderColor = "#10b981";
+                        setTimeout(() => {
+                            txtDocCliente.style.borderColor = "";
+                            txtNombreCliente.style.borderColor = "";
+                        }, 1500);
+                    }
+                } catch (error) {
+                    // 🔓 Si da error (404), es un CLIENTE NUEVO. Desbloqueamos todo.
+                    console.log("Cliente nuevo, habilitando escritura.");
+                    
+                    txtNombreCliente.value = "";
+                    txtCorreoCliente.value = "";
+                    
+                    // Quitamos el modo solo lectura
+                    txtNombreCliente.readOnly = false;
+                    txtCorreoCliente.readOnly = false;
+                    
+                    // Restauramos los estilos originales
+                    txtNombreCliente.style.backgroundColor = "";
+                    txtCorreoCliente.style.backgroundColor = "";
+                    txtNombreCliente.style.cursor = "text";
+                    txtCorreoCliente.style.cursor = "text";
+
+                    txtNombreCliente.placeholder = "Ej. Juan Pérez (Cliente Nuevo)";
+                }
+            } else {
+                // 🔓 Si el cajero borra números y ya no son 8 ni 11, limpiamos y desbloqueamos
+                txtNombreCliente.value = "";
+                txtCorreoCliente.value = "";
+                
+                txtNombreCliente.readOnly = false;
+                txtCorreoCliente.readOnly = false;
+                
+                txtNombreCliente.style.backgroundColor = "";
+                txtCorreoCliente.style.backgroundColor = "";
+                txtNombreCliente.style.cursor = "text";
+                txtCorreoCliente.style.cursor = "text";
+
+                txtNombreCliente.placeholder = "Ej. Juan Pérez";
+            }
+        });
+    }
 });
