@@ -11,7 +11,19 @@ const buildHeaders = (isMultipart = false, incluirAuth = true) => {
   }
 
   if (incluirAuth) {
-    const token = obtenerTokenCliente();
+    // 🔥 1. Buscamos el token del administrador en la sesión de navegación
+    let tokenAdmin = sessionStorage.getItem('token');
+    
+    // (Respaldo técnico por si guardaste el token dentro del objeto usuarioActivo)
+    if (!tokenAdmin && sessionStorage.getItem('usuarioActivo')) {
+        try {
+            tokenAdmin = JSON.parse(sessionStorage.getItem('usuarioActivo')).token;
+        } catch(e) {}
+    }
+
+    // 🔥 2. Unimos los mundos: Usa el token del Admin si existe; si no, usa el del cliente E-commerce
+    const token = tokenAdmin || localStorage.getItem('token') || obtenerTokenCliente();
+
     if (token && !esJwtExpirado(token)) {
       headers.Authorization = `Bearer ${token}`;
     }
