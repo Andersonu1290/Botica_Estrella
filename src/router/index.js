@@ -54,7 +54,7 @@ const router = createRouter({
         { path: 'nosotros', name: 'nosotros', component: NosotrosView },
         { path: 'checkout', name: 'checkout', component: CheckoutView, meta: { requiresClientAuth: true } },
         { path: 'login', name: 'loginPublico', component: LoginPublicoView },
-        { path: 'confirmacion', name: 'confirmacion', component: ConfirmacionView },
+        { path: 'confirmacionn', name: 'confirmacion', component: ConfirmacionView },
         { path: 'libro-reclamaciones', name: 'libroReclamaciones', component: LibroReclamacionesView },
         { path: 'politicas-privacidad', name: 'politicasPrivcadidad', component: Politicas_Privacidad_View},
         { path: 'seguimiento', name: 'seguimiento', component: SeguimientoView },
