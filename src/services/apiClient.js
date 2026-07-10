@@ -33,9 +33,10 @@ const buildHeaders = (isMultipart = false, incluirAuth = true) => {
 };
 
 const manejarRespuesta = async (respuesta) => {
-  if (respuesta.status === 401) {
-    authStore.cerrarSesion();
-    throw new Error('Tu sesión expiró. Inicia sesión nuevamente.');
+  // 🔥 CORRECCIÓN: Agregamos el 403 para atrapar tokens caducados o inválidos
+  if (respuesta.status === 401 || respuesta.status === 403) {
+    authStore.cerrarSesion(); // Esto destruye el token guardado
+    throw new Error('Tu sesión ha expirado o no tienes permisos. Inicia sesión nuevamente.');
   }
 
   if (respuesta.status === 204) {
@@ -45,7 +46,6 @@ const manejarRespuesta = async (respuesta) => {
   const texto = await respuesta.text();
 
   let data;
-
   try {
     data = texto ? JSON.parse(texto) : {};
   } catch {
