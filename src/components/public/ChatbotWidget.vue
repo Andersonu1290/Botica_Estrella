@@ -20,7 +20,7 @@ onMounted(() => {
   import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js')
     .then(({ createChat }) => {
       createChat({
-        webhookUrl: 'https://n8n-production-5938.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat',
+        webhookUrl: 'https://n8n-production-e995.up.railway.app/webhook/c3cef601-7dc2-43cf-bddb-3dc0047106cb/chat',
 
         initialMessages: [
           '¡Hola! 👋',

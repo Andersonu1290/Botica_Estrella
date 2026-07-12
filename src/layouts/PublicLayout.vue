@@ -161,6 +161,7 @@
         </div>
       </div>
     </footer>
+    <ChatbotWidget />
 
   </div>
 </template>
