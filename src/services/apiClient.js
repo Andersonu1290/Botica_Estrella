@@ -204,6 +204,113 @@ export const apiClient = {
       console.error("Error cancelando pedido:", error);
       throw error;
     }
-  }
+  },
+
+  // ====================================================================
+  //   MÓDULO SMARTCARE (HITL + OCR)
+  // ====================================================================
+  async procesarRecetaOcr(archivo) {
+    try {
+      const formData = new FormData();
+      formData.append('imagen', archivo);
+
+      // Pasamos 'true' en el primer parámetro de buildHeaders para indicar que es Multipart
+      // Esto evita que setee 'application/json' y deja que el navegador calcule el Boundary de la imagen
+      const respuesta = await fetch(`${BASE_URL}/smartcare/procesar-ocr`, {
+        method: 'POST',
+        headers: buildHeaders(true, true),
+        body: formData
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al procesar el OCR:", error);
+      throw error;
+    }
+  },
+
+  async registrarTratamiento(datosTratamiento) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos`, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify(datosTratamiento)
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error guardando el tratamiento:", error);
+      throw error;
+    }
+  },
+
+  async obtenerHistorialSmartCare(idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos/usuario/${idUsuario}`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error cargando historial de SmartCare:", error);
+      throw error;
+    }
+  },
+
+  async registrarTomaDosis(idTratamiento, idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos/${idTratamiento}/tomar-dosis?idUsuario=${idUsuario}`, {
+        method: 'PUT',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al registrar la toma:", error);
+      throw error;
+    }
+  },
+
+  async eliminarTratamiento(idTratamiento, idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos/${idTratamiento}?idUsuario=${idUsuario}`, {
+        method: 'DELETE',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al eliminar el tratamiento:", error);
+      throw error;
+    }
+  },
+
+  async actualizarTratamiento(idTratamiento, datosNuevos, idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos/${idTratamiento}?idUsuario=${idUsuario}`, {
+        method: 'PUT',
+        headers: buildHeaders(),
+        body: JSON.stringify(datosNuevos)
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al actualizar el tratamiento:", error);
+      throw error;
+    }
+  },
+
+  // Consultar cuántas pastillas reales tiene el paciente en su historial de compras
+  async consultarStockBotiquin(idUsuario, idProducto) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/botiquin/stock?idUsuario=${idUsuario}&idProducto=${idProducto}`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
+      
+      if (!respuesta.ok) return 0;
+      
+      const stockText = await respuesta.text();
+      return Number(stockText) || 0;
+    } catch (error) {
+      console.error("Error al consultar el botiquín virtual:", error);
+      return 0; // En caso de fallo de red, asumimos 0 para obligar a comprar
+    }
+  },
 
 };
