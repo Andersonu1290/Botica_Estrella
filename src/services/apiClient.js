@@ -339,4 +339,17 @@ export const apiClient = {
     }
   },
 
+  async obtenerNotificaciones(idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/notificaciones/${idUsuario}`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al cargar notificaciones:", error);
+      return [];
+    }
+  },
+
 };

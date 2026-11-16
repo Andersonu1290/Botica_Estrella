@@ -1,10 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { apiClient } from '@/services/apiClient';
 import { authStore } from '@/store/auth';
 import { carritoStore } from '@/store/carrito';
 import Icono from '@/components/smartcare/Icono.vue';
 const emit = defineEmits(['cancelar', 'guardado']);
+
+const router = useRouter();
 
 // ---------- Utilidades ----------
 const dos = (n) => String(n).padStart(2, '0');
@@ -310,20 +313,20 @@ const guardarTratamiento = async () => {
   if (!puedeGuardar.value) return;
   guardando.value = true;
   errorGuardar.value = '';
-  
+
   try {
     const ahora = new Date();
     const horaExacta = String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0');
 
     if (!formulario.value.idProducto) {
-       formulario.value.nombreMedicamento = textoBusqueda.value;
+      formulario.value.nombreMedicamento = textoBusqueda.value;
     }
 
     const payload = {
       ...formulario.value,
       idUsuario: authStore.usuarioActual.idUsuario,
       fechaInicio: ahora.toISOString().split('T')[0],
-      horaPrimeraDosis: horaExacta 
+      horaPrimeraDosis: horaExacta,
     };
 
     // ELIMINAMOS EL NULL PARA QUE SPRING BOOT NO DE ERROR DE PARSEO
@@ -336,13 +339,29 @@ const guardarTratamiento = async () => {
     } else {
       await apiClient.registrarTratamiento(payload);
     }
-    
+
     formulario.value = formularioVacio();
     textoBusqueda.value = '';
     stockRealBotiquin.value = 0;
-    emit('guardado');
+    emit('guardado'); // Le avisa a la vista principal que terminó con éxito
   } catch (error) {
-    errorGuardar.value = error.message || 'No pudimos guardar el tratamiento. Inténtalo de nuevo.';
+    const mensaje = error?.message || 'No pudimos guardar el tratamiento. Inténtalo de nuevo.';
+
+    // LÓGICA DE NEGOCIO: si el error es por falta de pastillas, lo mandamos a comprar
+    if (mensaje.toUpperCase().includes('STOCK INSUFICIENTE')) {
+      errorGuardar.value = mensaje; // Queda visible en el formulario si el usuario cancela
+
+      const irAComprar = confirm(
+        mensaje + '\n\n¿Deseas ir al catálogo de Botica Estrella ahora mismo para adquirir este medicamento?'
+      );
+
+      if (irAComprar) {
+        router.push('/productos'); // Redirección automática
+      }
+    } else {
+      // Cualquier otro error (ej: error de red) se muestra normal
+      errorGuardar.value = mensaje;
+    }
   } finally {
     guardando.value = false;
   }

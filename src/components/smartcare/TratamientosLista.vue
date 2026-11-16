@@ -89,6 +89,9 @@ const textoDias = (n) => {
   return n === 1 ? 'Queda 1 día' : `Quedan ${n} días`;
 };
 
+// Un tratamiento es crítico si el backend lo marca o si le quedan 3 días o menos
+const esCritico = (t) => t.alertaCritica || t.diasRestantes <= 3;
+
 const filas = computed(() => {
   const fuente = pestanaActual.value === 'ACTIVOS' ? activos.value : finalizados.value;
   const lista = fuente.map((t) => ({ ...t, proxima: calcularProxima(t) }));
@@ -118,7 +121,7 @@ const kpiProxima = computed(() => {
   };
 });
 
-const criticos = computed(() => activos.value.filter((t) => t.alertaCritica).length);
+const criticos = computed(() => activos.value.filter((t) => esCritico(t)).length);
 
 const fechaHoy = computed(() => {
   const txt = new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -265,11 +268,23 @@ const fechaHoy = computed(() => {
         <div class="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto ml-auto">
           <div class="flex flex-col items-start md:items-end gap-1">
             <template v-if="t.estado === 'ACTIVO'">
-              <component :is="t.alertaCritica ? 'button' : 'span'" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-black uppercase tracking-wider" :class="t.alertaCritica ? 'border-red-200 bg-red-50 text-red-600 hover:scale-105 transition-transform' : 'border-emerald-200 bg-emerald-50 text-emerald-600'" @click="t.alertaCritica ? emit('alerta', t) : null">
-                <Icono v-if="t.alertaCritica" nombre="alerta" class="h-4 w-4" />
-                <span v-else class="h-2 w-2 rounded-full bg-emerald-500" />
-                {{ textoDias(t.diasRestantes) }}
-              </component>
+              <!-- ALERTA DE STOCK CRÍTICO (BOTÓN QUE ABRE EL WHATSAPP) -->
+              <button 
+                v-if="esCritico(t)" 
+                @click="emit('alerta', t)"
+                class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-full border border-red-100 hover:bg-red-100 hover:scale-105 transition-all shadow-sm active:scale-95 cursor-pointer"
+                title="Ver alerta de reposición"
+              >
+                <Icono nombre="alerta" class="w-4 h-4 shrink-0" />
+                <span class="text-[11px] font-black uppercase tracking-widest">{{ textoDias(t.diasRestantes) }}</span>
+              </button>
+
+              <!-- SI EL STOCK ESTÁ SANO (VERDE) -->
+              <div v-else class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 cursor-default">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-[11px] font-black uppercase tracking-widest">{{ textoDias(t.diasRestantes) }}</span>
+              </div>
+
               <p class="text-xs font-bold text-slate-400">{{ t.stockActual }} unidades restantes</p>
             </template>
           </div>

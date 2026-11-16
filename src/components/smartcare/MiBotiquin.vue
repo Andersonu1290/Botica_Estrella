@@ -55,21 +55,32 @@ onMounted(async () => {
         
         <!-- Desglose Inteligente -->
         <div class="bg-slate-50 rounded-xl p-4 flex flex-col gap-3 border border-slate-100 mt-auto">
+          
           <div class="flex justify-between items-center text-sm">
-            <span class="text-slate-500 font-medium">Total comprado:</span>
+            <span class="text-slate-500 font-medium">Compradas en total:</span>
             <span class="font-bold text-slate-700">{{ item.totalComprado }} unds</span>
           </div>
+          
+          <!-- HISTÓRICO: Lo que ya se tomó -->
           <div class="flex justify-between items-center text-sm">
-            <span class="text-slate-500 font-medium">Consumido / En uso:</span>
-            <span class="font-bold text-slate-700">{{ item.totalAsignado }} unds</span>
+            <span class="text-slate-500 font-medium">Ya consumidas (Histórico):</span>
+            <span class="font-bold text-slate-700">{{ item.totalConsumido }} unds</span>
           </div>
           
+          <!-- RESERVA: Lo que está pendiente por tomar -->
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-slate-500 font-medium">Reservadas (Tratamiento actual):</span>
+            <span class="font-bold text-slate-700">{{ item.totalReservado }} unds</span>
+          </div>
+          
+          <!-- CAJA FUERTE: Lo que está libre -->
           <div class="flex justify-between items-center pt-3 border-t border-slate-200 mt-1">
-            <span class="text-sm font-bold text-slate-800">Stock libre:</span>
+            <span class="text-sm font-bold text-slate-800">Stock libre (Botiquín):</span>
             <span class="text-2xl font-black" :class="item.stockLibre > 0 ? 'text-emerald-600' : 'text-red-500'">
               {{ item.stockLibre }} <span class="text-xs font-bold opacity-70">unds</span>
             </span>
           </div>
+          
         </div>
       </article>
     </div>

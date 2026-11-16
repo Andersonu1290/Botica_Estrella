@@ -64,6 +64,74 @@
             <router-link to="/productos" class="hidden lg:block text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Catálogo</router-link>
             <router-link to="/nosotros" class="hidden lg:block text-slate-500 hover:text-medical-blue font-bold px-3 py-2 transition-colors">Nosotros</router-link>
             
+            <!-- ============================================== -->
+            <!-- NUEVA CAMPANA DE NOTIFICACIONES GLOBALES       -->
+            <!-- ============================================== -->
+            <div class="relative" v-if="authStore.estaLogueado">
+              <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="relative p-2 text-slate-500 hover:text-medical-blue transition-colors group focus:outline-none">
+                <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <!-- Globo Rojo -->
+                <span v-if="notificaciones.length > 0" class="absolute top-1 right-1 inline-flex items-center justify-center w-4 h-4 text-[9px] font-bold text-white bg-red-500 border-2 border-white rounded-full animate-pulse">
+                  {{ notificaciones.length }}
+                </span>
+              </button>
+
+              <!-- Dropdown de Notificaciones -->
+              <div v-if="mostrarNotificaciones" class="absolute right-0 mt-3 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                <div class="px-5 py-4 border-b border-slate-50 bg-slate-50 flex justify-between items-center">
+                  <h3 class="font-bold text-slate-800">Alertas médicas</h3>
+                  <span class="text-[10px] font-black uppercase tracking-widest bg-medical-blue/10 text-medical-blue px-2 py-1 rounded-full">{{ notificaciones.length }}</span>
+                </div>
+                
+                <div class="max-h-[24rem] overflow-y-auto">
+                  <div v-if="notificaciones.length === 0" class="p-8 text-center flex flex-col items-center justify-center">
+                    <span class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mb-3">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </span>
+                    <p class="text-slate-500 text-sm font-medium">No tienes alertas pendientes.</p>
+                  </div>
+
+                  <div v-for="notif in notificaciones" :key="notif.id" @click="irASmartCare" class="px-5 py-4 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer group">
+                    <div class="flex gap-4">
+                      
+                      <!-- LÓGICA VISUAL: Color y forma del icono basado en la matemática del backend -->
+                      <span class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border" 
+                        :class="{
+                          'bg-red-50 text-red-600 border-red-100': notif.tipo === 'DOSIS_ATRASADA' || notif.tipo === 'AGOTADO',
+                          'bg-amber-50 text-amber-600 border-amber-100': notif.tipo === 'ALERTA_STOCK',
+                          'bg-blue-50 text-blue-600 border-blue-100': notif.tipo === 'DOSIS_PROXIMA'
+                        }">
+                        
+                        <!-- Icono Atraso / Agotado -->
+                        <svg v-if="notif.tipo === 'DOSIS_ATRASADA' || notif.tipo === 'AGOTADO'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        
+                        <!-- Icono Proxima Dosis (Reloj) -->
+                        <svg v-else-if="notif.tipo === 'DOSIS_PROXIMA'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        
+                        <!-- Icono Stock Crítico (Caja) -->
+                        <svg v-else-if="notif.tipo === 'ALERTA_STOCK'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                      </span>
+                      
+                      <!-- Contenido de la Alerta -->
+                      <div class="flex-1">
+                        <p class="text-sm font-bold transition-colors leading-tight"
+                          :class="{
+                            'text-red-600': notif.tipo === 'DOSIS_ATRASADA' || notif.tipo === 'AGOTADO',
+                            'text-slate-800 group-hover:text-medical-blue': notif.tipo !== 'DOSIS_ATRASADA' && notif.tipo !== 'AGOTADO'
+                          }">
+                          {{ notif.titulo }}
+                        </p>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ notif.mensaje }}</p>
+                        <p class="text-[10px] font-black text-slate-400 mt-2">{{ formatFechaNotif(notif.fecha) }}</p>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ============================================== -->
+
             <router-link to="/carrito" class="relative p-2 text-slate-500 hover:text-medical-blue transition-colors group">
               <svg class="w-7 h-7 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -167,7 +235,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { filtrosStore } from '@/store/filtros';
 import { carritoStore } from '@/store/carrito';
@@ -181,17 +249,63 @@ const router = useRouter();
 const buscadorFoco = ref(false);
 const catalogoGlobal = ref([]);
 
+// ==========================================
+// NOTIFICACIONES GLOBALES (SmartCare)
+// ==========================================
+const notificaciones = ref([]);
+const mostrarNotificaciones = ref(false);
+let intervaloNotificaciones = null;
+
+const cargarNotificaciones = async () => {
+  if (!authStore.estaLogueado) return;
+  try {
+    notificaciones.value = await apiClient.obtenerNotificaciones(authStore.usuarioActual.idUsuario);
+  } catch (error) {
+    console.error('Error cargando notificaciones:', error);
+  }
+};
+
+const formatFechaNotif = (fechaArray) => {
+  if (!fechaArray) return '';
+  const [y, m, d, h, min] = fechaArray;
+  return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')} - ${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')} h`;
+};
+
+const irASmartCare = () => {
+  mostrarNotificaciones.value = false;
+  router.push('/smartcare'); // o la ruta que uses para ir a Mis Tratamientos
+};
+
 onMounted(async () => {
   // Carga del carrito en DB
   if (authStore.estaLogueado) {
     carritoStore.cargarCarritoBD(authStore.usuarioActual.idUsuario);
   }
+
+  // Notificaciones: carga inicial + actualización cada 1 minuto (60000 ms) sin recargar la página
+  cargarNotificaciones();
+  intervaloNotificaciones = setInterval(cargarNotificaciones, 60000);
   
   // Cargamos el catálogo silenciosamente en segundo plano para poder predecir las búsquedas
   try {
     catalogoGlobal.value = await apiClient.obtenerProductos();
   } catch (error) {
     console.error("Error inicializando buscador predictivo", error);
+  }
+});
+
+// Limpia el intervalo al destruir el layout para evitar fugas de memoria
+onUnmounted(() => {
+  if (intervaloNotificaciones) clearInterval(intervaloNotificaciones);
+});
+
+// Si el usuario inicia o cierra sesión sin recargar la página, la campana se actualiza
+watch(() => authStore.estaLogueado, (logueado) => {
+  if (logueado) {
+    cargarNotificaciones();
+  } else {
+    notificaciones.value = [];
+    mostrarNotificaciones.value = false;
   }
 });
 
