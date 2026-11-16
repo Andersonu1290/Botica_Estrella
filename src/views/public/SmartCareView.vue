@@ -8,6 +8,7 @@ import TratamientosLista from '@/components/smartcare/TratamientosLista.vue';
 import NuevoTratamiento from '@/components/smartcare/NuevoTratamiento.vue';
 import EditarTratamiento from '@/components/smartcare/EditarTratamiento.vue';
 import AlertaInventarioModal from '@/components/smartcare/AlertaInventarioModal.vue';
+import MiBotiquin from '@/components/smartcare/MiBotiquin.vue';
 
 const router = useRouter();
 
@@ -40,11 +41,12 @@ const alternarMenu = () => {
 };
 
 const menu = [
-  { nombre: 'Resumen', icono: 'resumen' },
-  { nombre: 'Mis tratamientos', icono: 'pastilla', activo: true },
-  { nombre: 'Recetas', icono: 'receta' },
-  { nombre: 'Pedidos', icono: 'bolsa' },
-  { nombre: 'Citas', icono: 'calendario' },
+  { id: 'RESUMEN', nombre: 'Resumen', icono: 'resumen' },
+  { id: 'LISTA', nombre: 'Mis tratamientos', icono: 'pastilla' },
+  { id: 'BOTIQUIN', nombre: 'Mi botiquín', icono: 'caja' }, // EL NUEVO MENÚ
+  { id: 'RECETAS', nombre: 'Recetas', icono: 'receta' },
+  { id: 'PEDIDOS', nombre: 'Pedidos', icono: 'bolsa' },
+  { id: 'CITAS', nombre: 'Citas', icono: 'calendario' },
 ];
 
 const cargarHistorial = async () => {
@@ -95,7 +97,12 @@ const eliminarTratamiento = async (tratamiento) => {
 const registrarTomaDosis = async (tratamiento) => {
   try {
     await apiClient.registrarTomaDosis(tratamiento.idTratamiento, authStore.usuarioActual.idUsuario);
-    await cargarHistorial();
+    await cargarHistorial(); // Actualiza los datos en vivo
+    
+    // Si la matemática dictaba que esa era su última pastilla, le avisamos:
+    if ((tratamiento.stockActual - tratamiento.cantidadPorToma) < tratamiento.cantidadPorToma) {
+      alert("🎉 ¡Felicidades! Has completado este tratamiento. Ha sido movido a tu pestaña de Finalizados automáticamente.");
+    }
   } catch (error) {
     alert(error.message || 'Error al registrar la toma.');
   }
@@ -105,6 +112,18 @@ const registrarTomaDosis = async (tratamiento) => {
 const prepararEdicion = (tratamiento) => {
   tratamientoAEditar.value = tratamiento;
   vistaActual.value = 'EDITAR';
+};
+
+// Agrega esta función debajo de eliminarTratamiento
+const finalizarTratamiento = async (tratamiento) => {
+  const confirmacion = confirm(`¿Marcar el tratamiento de ${tratamiento.nombreMedicamento} como finalizado?`);
+  if (!confirmacion) return;
+  try {
+    await apiClient.finalizarTratamiento(tratamiento.idTratamiento, authStore.usuarioActual.idUsuario);
+    await cargarHistorial();
+  } catch (error) {
+    alert(error.message || 'Error al finalizar el tratamiento.');
+  }
 };
 
 onMounted(cargarHistorial);
@@ -131,23 +150,22 @@ onMounted(cargarHistorial);
       </button>
 
       <nav class="flex flex-col items-center gap-1" aria-label="Mi salud">
-        <template v-for="item in menu" :key="item.nombre">
-          <span
-            v-if="item.activo"
-            class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white"
+        <template v-for="item in menu" :key="item.id">
+          <button
+            v-if="['LISTA', 'BOTIQUIN'].includes(item.id)" 
+            @click="vistaActual = item.id"
+            class="flex h-10 w-10 items-center justify-center rounded-xl transition-colors"
+            :class="vistaActual === item.id || (vistaActual === 'NUEVO' && item.id === 'LISTA') || (vistaActual === 'EDITAR' && item.id === 'LISTA') ? 'bg-white/15 text-white' : 'text-slate-400 hover:text-white hover:bg-white/10'"
             :title="item.nombre"
-            aria-current="page"
           >
             <Icono :nombre="item.icono" class="h-5 w-5" />
-            <span class="sr-only">{{ item.nombre }}</span>
-          </span>
+          </button>
           <span
             v-else
-            class="flex h-10 w-10 cursor-default items-center justify-center rounded-xl text-slate-500"
+            class="flex h-10 w-10 cursor-default items-center justify-center rounded-xl text-slate-500 opacity-50"
             :title="`${item.nombre} (próximamente)`"
           >
             <Icono :nombre="item.icono" class="h-5 w-5" />
-            <span class="sr-only">{{ item.nombre }}</span>
           </span>
         </template>
       </nav>
@@ -184,7 +202,11 @@ onMounted(cargarHistorial);
         <template v-if="vistaActual !== 'LISTA'">
           <Icono nombre="chevronDer" class="h-3.5 w-3.5 text-slate-300" />
           <span class="font-semibold text-slate-900">
-            {{ vistaActual === 'EDITAR' ? 'Editar tratamiento' : 'Nuevo tratamiento' }}
+            <!-- Arreglamos la lógica para que muestre el título correcto -->
+            {{ 
+              vistaActual === 'EDITAR' ? 'Editar tratamiento' : 
+              (vistaActual === 'BOTIQUIN' ? 'Mi Botiquín Virtual' : 'Nuevo tratamiento') 
+            }}
           </span>
         </template>
       </nav>
@@ -199,6 +221,7 @@ onMounted(cargarHistorial);
         @editar="prepararEdicion"
         @eliminar="eliminarTratamiento"
         @tomar-dosis="registrarTomaDosis"
+        @finalizar="finalizarTratamiento" 
       />
 
       <!-- VISTA 2: REGISTRAR NUEVO TRATAMIENTO -->
@@ -215,6 +238,11 @@ onMounted(cargarHistorial);
         :tratamiento-original="tratamientoAEditar"
         @cancelar="volverALista"
         @guardado="alGuardar"
+      />
+
+      <!-- VISTA 4: MI BOTIQUÍN (Inventario Libre) -->
+      <MiBotiquin 
+        v-else-if="vistaActual === 'BOTIQUIN'" 
       />
     </main>
 

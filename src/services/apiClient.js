@@ -313,4 +313,30 @@ export const apiClient = {
     }
   },
 
+  async finalizarTratamiento(idTratamiento, idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/tratamientos/${idTratamiento}/finalizar?idUsuario=${idUsuario}`, {
+        method: 'PUT',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al finalizar el tratamiento:", error);
+      throw error;
+    }
+  },
+
+  async obtenerBotiquin(idUsuario) {
+    try {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/botiquin/${idUsuario}`, {
+        method: 'GET',
+        headers: buildHeaders()
+      });
+      return await manejarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error cargando el botiquín:", error);
+      return [];
+    }
+  },
+
 };
