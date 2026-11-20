@@ -276,11 +276,25 @@ const irASmartCare = () => {
   router.push('/smartcare'); // o la ruta que uses para ir a Mis Tratamientos
 };
 
+// ==========================================
+// SINCRONIZACIÓN DEL CARRITO ENTRE PESTAÑAS
+// ==========================================
+// Cuando el usuario vuelve a esta pestaña (por ejemplo, después de pagar en otra),
+// recargamos el carrito desde la BD para que el contador de la cabecera se actualice.
+const sincronizarCarrito = () => {
+  if (authStore.estaLogueado) {
+    carritoStore.cargarCarritoBD(authStore.usuarioActual.idUsuario);
+  }
+};
+
 onMounted(async () => {
   // Carga del carrito en DB
   if (authStore.estaLogueado) {
     carritoStore.cargarCarritoBD(authStore.usuarioActual.idUsuario);
   }
+
+  // Cuando el usuario regresa y enfoca esta ventana, actualizamos el carrito
+  window.addEventListener('focus', sincronizarCarrito);
 
   // Notificaciones: carga inicial + actualización cada 1 minuto (60000 ms) sin recargar la página
   cargarNotificaciones();
@@ -294,9 +308,10 @@ onMounted(async () => {
   }
 });
 
-// Limpia el intervalo al destruir el layout para evitar fugas de memoria
+// Limpia el intervalo y los listeners al destruir el layout para evitar fugas de memoria
 onUnmounted(() => {
   if (intervaloNotificaciones) clearInterval(intervaloNotificaciones);
+  window.removeEventListener('focus', sincronizarCarrito);
 });
 
 // Si el usuario inicia o cierra sesión sin recargar la página, la campana se actualiza
@@ -347,7 +362,7 @@ const verTodosResultados = () => {
 
 const salirPublico = () => {
   authStore.cerrarSesion();
-  carritoStore.items = [];
+  carritoStore.vaciarCarrito(); // Vacía items y limpia localStorage
   router.push('/');
 };
 </script>

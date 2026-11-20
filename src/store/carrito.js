@@ -1,3 +1,4 @@
+// store/carrito.js
 import { reactive } from 'vue';
 import { esJwtExpirado, obtenerTokenCliente } from '@/utils/auth';
 
@@ -27,6 +28,16 @@ export const carritoStore = reactive({
       if (!item.producto) return total;
       return total + (item.producto.precio * item.cantidad);
     }, 0);
+  },
+
+  // 0. Resetear el carrito local (estado + localStorage)
+  vaciarCarrito() {
+    this.items = []; // Vacía la lista de productos (totalArticulos y subtotalPrecio pasan a 0 automáticamente)
+    try {
+      localStorage.removeItem('carrito');
+    } catch (error) {
+      console.error("Error limpiando localStorage del carrito:", error);
+    }
   },
 
   // 1. Cargar el carrito desde MySQL
@@ -108,7 +119,7 @@ export const carritoStore = reactive({
         console.error(`Error vaciando carrito: HTTP ${res.status}`);
         return;
       }
-      this.items = [];
+      this.vaciarCarrito(); // Resetea items y limpia localStorage
     } catch (error) {
       console.error("Error vaciando BD:", error);
       throw error;

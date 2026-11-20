@@ -43,6 +43,8 @@ const procesandoOcr = ref(false);
 const guardando = ref(false);
 const errorOcr = ref('');
 const errorGuardar = ref('');
+// true cuando el backend rechazó el registro por stock comprometido/insuficiente
+const errorEsDeStock = ref(false);
 
 // ---------- Buscador de Catálogo ----------
 const catalogoGlobal = ref([]);
@@ -62,6 +64,7 @@ const resultadosBusqueda = computed(() => {
 });
 
 // ---------- Stock del botiquín ----------
+// El backend devuelve el stock LIBRE (comprado - consumido - reservado por otros tratamientos activos)
 const verificarStock = async (idProducto) => {
   stockRealBotiquin.value = 0;
   if (!idProducto) return;
@@ -88,6 +91,8 @@ const seleccionarProducto = async (prod) => {
   formulario.value.nombreMedicamento = prod.nombre;
   textoBusqueda.value = prod.nombre;
   buscadorFoco.value = false;
+  errorGuardar.value = '';
+  errorEsDeStock.value = false;
 
   await actualizarStockEnTiempoReal();
 };
@@ -115,7 +120,9 @@ onUnmounted(() => {
 });
 
 // Si el usuario edita el texto a mano, se rompe la vinculación
-const onInputBusqueda = () => {
+// y el nombre escrito pasa a ser el nombre del medicamento (registro manual)
+const onInputBusqueda = (e) => {
+  formulario.value.nombreMedicamento = e.target.value;
   if (formulario.value.idProducto) {
     formulario.value.idProducto = null;
     stockRealBotiquin.value = 0;
@@ -179,6 +186,8 @@ const onFileChange = async (e) => {
 
     // Actualizamos el buscador visual
     textoBusqueda.value = nombreFinal;
+    errorGuardar.value = '';
+    errorEsDeStock.value = false;
 
     // Consultamos el stock del producto auto-vinculado
     await verificarStock(idEncontrado);
@@ -194,10 +203,12 @@ const onFileChange = async (e) => {
 // ---------- Validación y vista previa ----------
 const formularioCompleto = computed(() => {
   const f = formulario.value;
+  // El nombre puede venir del buscador (escrito a mano) o del formulario (OCR / catálogo)
+  const nombre = (textoBusqueda.value || f.nombreMedicamento || '').trim();
   return (
-    f.nombreMedicamento.trim() &&
-    f.dosis.trim() &&
-    f.unidadMedida.trim() &&
+    nombre &&
+    String(f.dosis).trim() &&
+    String(f.unidadMedida).trim() &&
     Number(f.cantidadPorToma) > 0 &&
     Number(f.frecuenciaHoras) > 0 &&
     Number(f.cantidadInicial) > 0 &&
@@ -206,7 +217,7 @@ const formularioCompleto = computed(() => {
   );
 });
 
-// Solo bloquea si el producto está vinculado, no hay stock y es un tratamiento nuevo
+// Solo bloquea si el producto está vinculado, no hay stock libre y es un tratamiento nuevo
 const requiereCompra = computed(
   () =>
     !!formulario.value.idProducto &&
@@ -262,7 +273,7 @@ const primeraDosis = computed(() => {
 });
 
 // ---------- Compra del medicamento faltante ----------
-// Matemática de inventario: lo que necesita - lo que ya tiene en casa
+// Matemática de inventario: lo que necesita - lo que tiene LIBRE en casa
 const cantidadFaltanteComprar = computed(() => {
   const requerido = Number(formulario.value.cantidadInicial) || 0;
   const enCasa = Number(stockRealBotiquin.value) || 0;
@@ -312,7 +323,8 @@ const comprarMedicamentoFaltante = async () => {
 const guardarTratamiento = async () => {
   if (!puedeGuardar.value) return;
   guardando.value = true;
-  errorGuardar.value = '';
+  errorGuardar.value = ''; // Limpiamos errores previos
+  errorEsDeStock.value = false;
 
   try {
     const ahora = new Date();
@@ -345,11 +357,21 @@ const guardarTratamiento = async () => {
     stockRealBotiquin.value = 0;
     emit('guardado'); // Le avisa a la vista principal que terminó con éxito
   } catch (error) {
+    // El backend responde 400 con { "error": "..." } y apiClient lo expone en error.message
     const mensaje = error?.message || 'No pudimos guardar el tratamiento. Inténtalo de nuevo.';
+    const mensajeMayus = mensaje.toUpperCase();
 
-    // LÓGICA DE NEGOCIO: si el error es por falta de pastillas, lo mandamos a comprar
-    if (mensaje.toUpperCase().includes('STOCK INSUFICIENTE')) {
-      errorGuardar.value = mensaje; // Queda visible en el formulario si el usuario cancela
+    // El backend rechazó la operación por inventario (comprometido o insuficiente)
+    const esErrorDeStock =
+      mensajeMayus.includes('STOCK COMPROMETIDO') ||
+      mensajeMayus.includes('STOCK INSUFICIENTE');
+
+    errorGuardar.value = mensaje; // Queda visible en el formulario si el usuario cancela
+    errorEsDeStock.value = esErrorDeStock;
+
+    if (esErrorDeStock) {
+      // Refrescamos el stock libre real para que el panel de la derecha quede al día
+      await actualizarStockEnTiempoReal();
 
       const irAComprar = confirm(
         mensaje + '\n\n¿Deseas ir al catálogo de Botica Estrella ahora mismo para adquirir este medicamento?'
@@ -358,9 +380,6 @@ const guardarTratamiento = async () => {
       if (irAComprar) {
         router.push('/productos'); // Redirección automática
       }
-    } else {
-      // Cualquier otro error (ej: error de red) se muestra normal
-      errorGuardar.value = mensaje;
     }
   } finally {
     guardando.value = false;
@@ -558,9 +577,28 @@ const campo =
             </span>
           </label>
 
-          <p v-if="errorGuardar" role="alert" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
-            {{ errorGuardar }}
-          </p>
+          <!-- ALERTA DE ERROR RECHAZADO POR EL BACKEND (stock comprometido/insuficiente u otros) -->
+          <div
+            v-if="errorGuardar"
+            role="alert"
+            class="rounded-md border-l-4 border-red-500 bg-red-50 p-4 text-red-700 shadow-sm"
+          >
+            <div class="flex items-start gap-3">
+              <Icono nombre="alerta" class="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+              <div class="min-w-0">
+                <p class="text-sm font-bold">{{ errorGuardar }}</p>
+                <button
+                  v-if="errorEsDeStock"
+                  type="button"
+                  class="mt-3 inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700 active:scale-95"
+                  @click="router.push('/productos')"
+                >
+                  <Icono nombre="bolsa" class="h-4 w-4" />
+                  Ir al catálogo a comprar
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col items-center justify-between gap-4 border-t border-slate-100 bg-slate-50 px-6 py-5 md:flex-row md:px-8">
@@ -639,14 +677,14 @@ const campo =
               <p class="text-emerald-700 font-bold text-sm mb-1 flex items-center gap-1">
                 <Icono nombre="check" class="w-4 h-4" /> ¡Tienes stock disponible!
               </p>
-              <p class="text-xs text-emerald-600">Tienes {{ stockRealBotiquin }} unidades en casa.</p>
+              <p class="text-xs text-emerald-600">Tienes {{ stockRealBotiquin }} unidades libres en tu botiquín.</p>
             </template>
 
             <template v-else>
               <p class="text-red-700 font-black text-sm mb-2 flex items-center gap-1">
-                <Icono nombre="alerta" class="w-4 h-4" /> No tienes este medicamento
+                <Icono nombre="alerta" class="w-4 h-4" /> No tienes stock libre de este medicamento
               </p>
-              <p class="text-xs text-red-600 mb-3">Según tus compras, no tienes stock en casa. Cómpralo ahora para poder iniciar tu tratamiento.</p>
+              <p class="text-xs text-red-600 mb-3">Tus unidades en casa ya están reservadas para otro tratamiento activo, o aún no las has comprado. Cómpralo ahora para poder iniciar este tratamiento.</p>
               <button
                 type="button"
                 @click="comprarMedicamentoFaltante"

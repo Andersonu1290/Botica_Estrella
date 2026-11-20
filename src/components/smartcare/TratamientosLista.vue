@@ -47,15 +47,26 @@ const calcularProxima = (t) => {
 };
 
 // ---------- 3. Control de Seguridad Médica ----------
-const esHoraDeTomar = (t) => {
+// Evalúa si ya es hora de tomar la dosis (o si ya se pasó de la hora).
+// Cubre la primera dosis y cualquier dosis atrasada.
+const puedeTomarDosis = (t) => {
   if (!t.proxima) return false;
-  // Habilitamos el botón 30 minutos antes por si el paciente se adelanta un poco
-  return Date.now() >= (t.proxima.getTime() - (30 * 60 * 1000));
+
+  const ahora = new Date();
+  // Aseguramos que la próxima toma sea un objeto Date real
+  const horaProgramada = new Date(t.proxima);
+
+  // Margen de 15 minutos antes: el botón se habilita un poco antes de la hora exacta
+  const horaHabilitacion = new Date(horaProgramada);
+  horaHabilitacion.setMinutes(horaHabilitacion.getMinutes() - 15);
+
+  // Si la hora actual es MAYOR O IGUAL a la hora de habilitación, ya es hora
+  return ahora.getTime() >= horaHabilitacion.getTime();
 };
 
 const intentarTomarDosis = (t) => {
   // Si aún no es la hora, lanzamos la advertencia, pero permitimos forzarlo (Modo Prueba)
-  if (!esHoraDeTomar(t)) {
+  if (!puedeTomarDosis(t)) {
     const forzarToma = confirm(
       `⚠️ AÚN NO ES LA HORA\n\nTu próxima dosis de ${t.nombreMedicamento} está programada para las ${hora(t.proxima)} h.\n\n¿Estás seguro de que deseas adelantar y registrar la toma ahora mismo para probar el sistema?`
     );
@@ -247,14 +258,16 @@ const fechaHoy = computed(() => {
             <template v-if="t.proxima">
               <p class="text-lg font-black text-slate-800 mt-0.5">{{ hora(t.proxima) }} h</p>
               
-              <!-- Botón Dinámico de Toma -->
+              <!-- Botón Dinámico de Toma (gris si aún no es hora, pero se puede forzar con confirmación) -->
               <button 
                 @click="intentarTomarDosis(t)" 
-                :class="esHoraDeTomar(t) ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-slate-50 text-slate-400 border border-slate-200 hover:bg-slate-100'"
-                class="mt-2 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 w-32"
+                :class="puedeTomarDosis(t) 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' 
+                  : 'bg-gray-100 text-gray-500 border border-gray-300 hover:bg-gray-200'"
+                class="mt-2 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 w-32 cursor-pointer"
               >
-                <Icono nombre="check" class="w-3.5 h-3.5" /> 
-                {{ esHoraDeTomar(t) ? 'TOMÉ MI DOSIS' : 'AÚN NO ES HORA' }}
+                <Icono v-if="puedeTomarDosis(t)" nombre="check" class="w-3.5 h-3.5" /> 
+                {{ puedeTomarDosis(t) ? 'TOMAR DOSIS' : 'AÚN NO ES HORA' }}
               </button>
             </template>
             <p v-else class="text-lg font-bold text-slate-400 mt-0.5">Tratamiento agotado</p>

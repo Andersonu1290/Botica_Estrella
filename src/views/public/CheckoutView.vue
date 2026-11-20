@@ -295,8 +295,16 @@ const procesarPago = async () => {
     // 4️⃣ UNA SOLA LLAMADA A LA API USANDO LA NUEVA RUTA /api/v1/pedidos
     const respuestaBackend = await apiClient.crearPedido(payloadMaestro);
 
-    // 5️⃣ Vaciamos el carrito tras confirmación exitosa
-    await carritoStore.vaciarBD(usuarioGuardado.idUsuario);
+    // 5️⃣ Pedido confirmado: vaciamos el carrito localmente de inmediato (estado + localStorage)
+    carritoStore.vaciarCarrito();
+
+    // Luego limpiamos el carrito en la BD. Si esto falla, el pedido ya fue creado,
+    // así que no bloqueamos la redirección a la confirmación.
+    try {
+      await carritoStore.vaciarBD(usuarioGuardado.idUsuario);
+    } catch (errVaciar) {
+      console.error("No se pudo vaciar el carrito en la BD:", errVaciar);
+    }
 
     // 6️⃣ Redirigimos pasando el ticket real (nroPedido) devuelto por Java
     const ticketFinal = respuestaBackend.pedido.nroPedido; // El JSON de Java manda { success: true, pedido: { nroPedido: ... } }

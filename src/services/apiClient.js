@@ -295,20 +295,25 @@ export const apiClient = {
     }
   },
 
-  // Consultar cuántas pastillas reales tiene el paciente en su historial de compras
+  // Consultar únicamente las unidades libres del botiquín virtual.
+  // Las unidades reservadas por tratamientos activos no deben contar como stock disponible.
   async consultarStockBotiquin(idUsuario, idProducto) {
     try {
-      const respuesta = await fetch(`${BASE_URL}/smartcare/botiquin/stock?idUsuario=${idUsuario}&idProducto=${idProducto}`, {
+      const respuesta = await fetch(`${BASE_URL}/smartcare/botiquin/${idUsuario}`, {
         method: 'GET',
         headers: buildHeaders()
       });
-      
+
       if (!respuesta.ok) return 0;
-      
-      const stockText = await respuesta.text();
-      return Number(stockText) || 0;
+
+      const botiquin = await manejarRespuesta(respuesta);
+      const item = Array.isArray(botiquin)
+        ? botiquin.find((producto) => Number(producto.idProducto) === Number(idProducto))
+        : null;
+
+      return item ? Math.max(0, Number(item.stockLibre) || 0) : 0;
     } catch (error) {
-      console.error("Error al consultar el botiquín virtual:", error);
+      console.error("Error al consultar el stock libre del botiquín virtual:", error);
       return 0; // En caso de fallo de red, asumimos 0 para obligar a comprar
     }
   },
